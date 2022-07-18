@@ -1,4 +1,4 @@
-name: build_umi_system_full
+name: build_umi_system_full_base_thyme
 on: 
   workflow_dispatch:
     inputs:
