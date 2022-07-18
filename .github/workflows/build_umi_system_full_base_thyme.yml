@@ -64,6 +64,7 @@ jobs:
             rm -rf "$GITHUB_WORKSPACE"/payload
             rm -rf "$GITHUB_WORKSPACE"/THYME
             sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/product.img "$GITHUB_WORKSPACE"/images
+            sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/system.img "$GITHUB_WORKSPACE"/images
             rm -rf "$GITHUB_WORKSPACE"/images/product.img
        - name: 4.替换相关文件
          run: |
@@ -74,6 +75,7 @@ jobs:
             sudo cp -f "$GITHUB_WORKSPACE"/DevicesAndroidOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay/
             sudo cp -f "$GITHUB_WORKSPACE"/DevicesOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay/
             sudo cp -f "$GITHUB_WORKSPACE"/umi.xml "$GITHUB_WORKSPACE"/images/product/etc/device_features/
+            sudo rm -rf "$GITHUB_WORKSPACE"/images/system/system/data-app
             sudo rm -rf "$GITHUB_WORKSPACE"/UMI/vendor/recovery-from-boot.p
             sudo rm -rf "$GITHUB_WORKSPACE"/UMI/vendor/bin/install-recovery.sh
             sudo mv -f "$GITHUB_WORKSPACE"/vbmeta.img "$GITHUB_WORKSPACE"/UMI/firmware-update
@@ -99,10 +101,12 @@ jobs:
             vendor_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/vendor | awk {'print $1'})
             vendor_size=$(echo "$vendor_size + 52428800" | bc)
             vendor_size=$(echo "$vendor_size / 4096" | bc)
-            system_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system.img | awk {'print $1'})
+            system_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system | awk {'print $1'})
+            system_size=$(echo "$system_size + 52428800" | bc)
+            system_size=$(echo "$system_size / 4096" | bc)
             system_ext_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system_ext.img | awk {'print $1'})
             UTC=$(date -u +%s)
-            for i in product vendor
+            for i in product vendor system
             do
                 sudo python3 "$GITHUB_WORKSPACE"/tools/fspatch.py "$GITHUB_WORKSPACE"/images/$i "$GITHUB_WORKSPACE"/images/TI_config/"$i"_fs_config
                 "$GITHUB_WORKSPACE"/tools/mke2fs -O ^has_journal -L $i -I 256 -M /$i -m 0 -t ext4 -b 4096 "$GITHUB_WORKSPACE"/images/$i.img $(eval echo "$"$i"_size")
