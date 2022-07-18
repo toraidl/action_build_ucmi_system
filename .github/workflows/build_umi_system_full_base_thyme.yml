@@ -66,6 +66,7 @@ jobs:
             sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/product.img "$GITHUB_WORKSPACE"/images
             sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/system.img "$GITHUB_WORKSPACE"/images
             rm -rf "$GITHUB_WORKSPACE"/images/product.img
+            rm -rf "$GITHUB_WORKSPACE"/images/system.img
        - name: 4.替换相关文件
          run: |
             sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/device_features/*
