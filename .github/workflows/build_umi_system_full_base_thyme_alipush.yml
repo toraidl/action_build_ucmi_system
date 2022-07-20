@@ -143,7 +143,7 @@ jobs:
          run: |
             curl https://rclone.org/install.sh | sudo bash
             mkdir -p ~/.config/rclone/
-            unzip -P ${{ secrets.PASSWORD }} rclone.zip -d ~/.config/rclone/
+            unzip -P ${{ secrets.PASSWORD }} "$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
             aliyundrive-webdav --refresh-token ${{ secrets.REFRESHTOKEN }} --host 127.0.0.1 --port 5244 --auth-user yzdhz --auth-password ${{ secrets.PASSWORD }} &
             rclone mkdir aliyun:/UMI_Package
             rclone sync ./zip/* aliyun:/UMI_Package
