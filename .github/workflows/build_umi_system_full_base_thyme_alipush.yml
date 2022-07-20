@@ -1,11 +1,11 @@
-name: build_umi_system_full
+name: build_umi_system_full_base_thyme_alipush
 on: 
   workflow_dispatch:
     inputs:
       URL:
         description: '待操作的系统包下载地址'     
         required: true
-        default: 'https://hugeota.d.miui.com/22.7.7/miui_PSYCHEPRE_22.7.7_a83dac045c_12.0.zip'
+        default: 'https://hugeota.d.miui.com/22.7.13/miui_THYMEPRE_22.7.13_684b61e1e3_12.0.zip'
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -17,6 +17,7 @@ jobs:
             sudo apt --fix-broken install
             sudo apt update --fix-missing
             pip3 install --upgrade pip
+            pip3 install aliyundrive-webdav
             pip3 install pycryptodome
             pip3 install docopt
             pip3 install requests
@@ -25,22 +26,22 @@ jobs:
        - name: 2.下载系统包
          run: |
             aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" ${{ github.event.inputs.URL }}
-            aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" https://hugeota.d.miui.com/22.7.13/miui_UMIPRE_22.7.13_e510a4479e_12.0.zip
+            aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" https://hugeota.d.miui.com/22.7.13/miui_UMIPRE_22.7.13_aliyun10a4479e_12.0.zip
        - name: 3.解包
          run: |
             sudo chmod 777 "$GITHUB_WORKSPACE"/tools/payload-dumper-go
             sudo chmod 777 "$GITHUB_WORKSPACE"/tools/brotli
-            mkdir -p "$GITHUB_WORKSPACE"/PSYCHE
+            mkdir -p "$GITHUB_WORKSPACE"/THYME
             mkdir -p "$GITHUB_WORKSPACE"/UMI
             mkdir -p "$GITHUB_WORKSPACE"/images
             mkdir -p "$GITHUB_WORKSPACE"/simages
             mkdir -p "$GITHUB_WORKSPACE"/zip
             mkdir -p "$GITHUB_WORKSPACE"/firmware
             URL=${{ github.event.inputs.URL }}
-            ZIP_NAME_PSYCHE=${URL##*/}
-            7z x "$GITHUB_WORKSPACE"/$ZIP_NAME_PSYCHE -r -o"$GITHUB_WORKSPACE"/PSYCHE
-            rm -rf "$GITHUB_WORKSPACE"/$ZIP_NAME_PSYCHE
-            ZIP_NAME_UMI=miui_UMIPRE_22.7.13_e510a4479e_12.0.zip
+            ZIP_NAME_THYME=${URL##*/}
+            7z x "$GITHUB_WORKSPACE"/$ZIP_NAME_THYME -r -o"$GITHUB_WORKSPACE"/THYME
+            rm -rf "$GITHUB_WORKSPACE"/$ZIP_NAME_THYME
+            ZIP_NAME_UMI=miui_UMIPRE_22.7.13_aliyun10a4479e_12.0.zip
             7z x "$GITHUB_WORKSPACE"/$ZIP_NAME_UMI -r -o"$GITHUB_WORKSPACE"/UMI firmware-update
             for i in odm vendor
             do
@@ -58,13 +59,15 @@ jobs:
             rm -rf "$GITHUB_WORKSPACE"/UMI/vendor.img
             for i in system product system_ext
             do
-                "$GITHUB_WORKSPACE"/tools/payload-dumper-go -p $i "$GITHUB_WORKSPACE"/PSYCHE/payload.bin
+                "$GITHUB_WORKSPACE"/tools/payload-dumper-go -p $i "$GITHUB_WORKSPACE"/THYME/payload.bin
                 mv "$GITHUB_WORKSPACE"/payload/$i.img "$GITHUB_WORKSPACE"/images/$i.img
             done
             rm -rf "$GITHUB_WORKSPACE"/payload
-            rm -rf "$GITHUB_WORKSPACE"/PSYCHE
+            rm -rf "$GITHUB_WORKSPACE"/THYME
             sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/product.img "$GITHUB_WORKSPACE"/images
+            sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/system.img "$GITHUB_WORKSPACE"/images
             rm -rf "$GITHUB_WORKSPACE"/images/product.img
+            rm -rf "$GITHUB_WORKSPACE"/images/system.img
        - name: 4.替换相关文件
          run: |
             sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/device_features/*
@@ -74,6 +77,7 @@ jobs:
             sudo cp -f "$GITHUB_WORKSPACE"/DevicesAndroidOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay/
             sudo cp -f "$GITHUB_WORKSPACE"/DevicesOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay/
             sudo cp -f "$GITHUB_WORKSPACE"/umi.xml "$GITHUB_WORKSPACE"/images/product/etc/device_features/
+            sudo rm -rf "$GITHUB_WORKSPACE"/images/system/system/data-app
             sudo rm -rf "$GITHUB_WORKSPACE"/UMI/vendor/recovery-from-boot.p
             sudo rm -rf "$GITHUB_WORKSPACE"/UMI/vendor/bin/install-recovery.sh
             sudo mv -f "$GITHUB_WORKSPACE"/vbmeta.img "$GITHUB_WORKSPACE"/UMI/firmware-update
@@ -94,15 +98,17 @@ jobs:
             DATE=${URL%/*}
             date=${DATE##*/}
             product_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/product | awk {'print $1'})
-            product_size=$(echo "$product_size + 52428800" | bc)
+            product_size=$(echo "$product_size + 20971520" | bc)
             product_size=$(echo "$product_size / 4096" | bc)
             vendor_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/vendor | awk {'print $1'})
-            vendor_size=$(echo "$vendor_size + 52428800" | bc)
+            vendor_size=$(echo "$vendor_size + 15728640" | bc)
             vendor_size=$(echo "$vendor_size / 4096" | bc)
-            system_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system.img | awk {'print $1'})
+            system_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system | awk {'print $1'})
+            system_size=$(echo "$system_size + 103809024" | bc)
+            system_size=$(echo "$system_size / 4096" | bc)
             system_ext_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system_ext.img | awk {'print $1'})
             UTC=$(date -u +%s)
-            for i in product vendor
+            for i in product vendor system
             do
                 sudo python3 "$GITHUB_WORKSPACE"/tools/fspatch.py "$GITHUB_WORKSPACE"/images/$i "$GITHUB_WORKSPACE"/images/TI_config/"$i"_fs_config
                 "$GITHUB_WORKSPACE"/tools/mke2fs -O ^has_journal -L $i -I 256 -M /$i -m 0 -t ext4 -b 4096 "$GITHUB_WORKSPACE"/images/$i.img $(eval echo "$"$i"_size")
@@ -133,11 +139,14 @@ jobs:
             zipmd5=${md5:0:10}
             mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_$date.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"$date"_$zipmd5.zip
             echo "artifact_name=miui_UMIPRE_"$date"_$zipmd5" >> $GITHUB_ENV
-       - name: 6.上传到Artifact
-         uses: actions/upload-artifact@v3
-         with:
-          name: ${{ env.artifact_name }}
-          path: "./zip/*"
+       - name: 6.上传到阿里云盘
+         run: |
+            curl https://rclone.org/install.sh | sudo bash
+            mkdir -p ~/.config/rclone/
+            unzip -P ${{ secrets.PASSWORD }} rclone.zip -d ~/.config/rclone/
+            aliyundrive-webdav --refresh-token ${{ secrets.REFRESHTOKEN }} --host 127.0.0.1 --port 5244 --auth-user yzdhz --auth-password ${{ secrets.PASSWORD }} &
+            rclone mkdir aliyun:/UMI_Package
+            rclone sync ./zip/* aliyun:/UMI_Package
        - name: 7.删除工作流运行
          uses: Mattraks/delete-workflow-runs@v2
          with:
