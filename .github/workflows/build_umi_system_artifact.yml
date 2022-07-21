@@ -1,4 +1,4 @@
-name: build_umi_system_full_base_thyme_alipush
+name: build_umi_system_artifact
 on: 
   workflow_dispatch:
     inputs:
@@ -17,7 +17,6 @@ jobs:
             sudo apt --fix-broken install
             sudo apt update --fix-missing
             pip3 install --upgrade pip
-            pip3 install aliyundrive-webdav
             pip3 install pycryptodome
             pip3 install docopt
             pip3 install requests
@@ -137,15 +136,13 @@ jobs:
             sudo rm -rf "$GITHUB_WORKSPACE"/images
             md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_$date.zip)
             zipmd5=${md5:0:10}
-            mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_$date.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"$date"_$zipmd5.zip
-       - name: 6.上传到阿里云盘
-         run: |
-            curl https://rclone.org/install.sh | sudo bash
-            mkdir -p ~/.config/rclone/
-            unzip -P ${{ secrets.PASSWORD }} "$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
-            nohup aliyundrive-webdav --refresh-token ${{ secrets.REFRESHTOKEN }} --host 127.0.0.1 --port 5244 --auth-user yzdhz --auth-password ${{ secrets.PASSWORD }} >/dev/null 2>& 1 &
-            rclone mkdir aliyun:/UMI_Package
-            rclone sync -P ./zip/* aliyun:/UMI_Package
+            mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_$date.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"$date"_"$zipmd5"_12.0.zip
+            echo "artifact_name=miui_UMIPRE_"$date"_"$zipmd5"_12.0" >> $GITHUB_ENV
+       - name: 6.上传到Artifact
+         uses: actions/upload-artifact@v3
+         with:
+          name: ${{ env.artifact_name }}
+          path: "./zip/*"
        - name: 7.删除工作流运行
          uses: Mattraks/delete-workflow-runs@v2
          with:
