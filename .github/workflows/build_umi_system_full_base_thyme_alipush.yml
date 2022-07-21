@@ -138,13 +138,12 @@ jobs:
             md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_$date.zip)
             zipmd5=${md5:0:10}
             mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_$date.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"$date"_$zipmd5.zip
-            echo "artifact_name=miui_UMIPRE_"$date"_$zipmd5" >> $GITHUB_ENV
        - name: 6.上传到阿里云盘
          run: |
             curl https://rclone.org/install.sh | sudo bash
             mkdir -p ~/.config/rclone/
             unzip -P ${{ secrets.PASSWORD }} "$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
-            aliyundrive-webdav --refresh-token ${{ secrets.REFRESHTOKEN }} --host 127.0.0.1 --port 5244 --auth-user yzdhz --auth-password ${{ secrets.PASSWORD }} &
+            nohup aliyundrive-webdav --refresh-token ${{ secrets.REFRESHTOKEN }} --host 127.0.0.1 --port 5244 --auth-user yzdhz --auth-password ${{ secrets.PASSWORD }} >/dev/null 2>& 1 &
             rclone mkdir aliyun:/UMI_Package
             rclone sync ./zip/* aliyun:/UMI_Package
        - name: 7.删除工作流运行
