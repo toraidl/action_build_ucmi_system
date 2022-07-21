@@ -145,7 +145,7 @@ jobs:
             unzip -P ${{ secrets.PASSWORD }} "$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
             nohup aliyundrive-webdav --refresh-token ${{ secrets.REFRESHTOKEN }} --host 127.0.0.1 --port 5244 --auth-user yzdhz --auth-password ${{ secrets.PASSWORD }} >/dev/null 2>& 1 &
             rclone mkdir aliyun:/UMI_Package
-            rclone sync ./zip/* aliyun:/UMI_Package
+            rclone sync -P ./zip/* aliyun:/UMI_Package
        - name: 7.删除工作流运行
          uses: Mattraks/delete-workflow-runs@v2
          with:
