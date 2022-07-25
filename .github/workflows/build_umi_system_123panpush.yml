@@ -135,7 +135,7 @@ jobs:
             sudo rm -rf "$GITHUB_WORKSPACE"/images
             md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_$date.zip)
             zipmd5=${md5:0:10}
-            mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_$date.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"$date"_"$zipmd5"_12.0.pdf
+            mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_$date.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"$date"_"$zipmd5"_12.0.zip
        - name: 6.上传到123盘
          run: |
             curl https://rclone.org/install.sh | sudo bash
