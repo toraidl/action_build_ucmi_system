@@ -140,7 +140,7 @@ jobs:
          run: |
             curl https://rclone.org/install.sh | sudo bash
             mkdir -p ~/.config/rclone/
-            unzip -P ${{ secrets.PASSWORD }} "$GITHUB_WORKSPACE"/rclone.zip -d ~/.config/rclone/
+            unzip -P ${{ secrets.PASSWORD }} "$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
             curl -fsSL "https://nn.ci/alist.sh" | sudo bash -s install
             sudo systemctl stop alist
             sudo mv -f /home/runner/.config/rclone/data.db /opt/alist/data
