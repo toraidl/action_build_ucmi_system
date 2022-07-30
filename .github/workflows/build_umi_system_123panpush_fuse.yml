@@ -1,6 +1,10 @@
 name: build_umi_system_123panpush_fuse
 on:
   workflow_dispatch:
+    inputs:
+      URL:
+        description: "待操作的系统包下载地址"
+        required: true
 jobs:
   build:
     strategy:
@@ -12,13 +16,10 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@master
-      - name: 1.检测更新
+      - name: 1.安装依赖
         run: |
           echo "action_build_version=$(cat /etc/issue | grep 20.04)" >>$GITHUB_ENV
-          echo "latest_url=$(curl http://${{ secrets.SERVERIP }}:19878/down/jO4Rahmfi3KC)" >> $GITHUB_ENV
-          echo "date=$(echo $latest_url | cut -d"/" -f4)" >> $GITHUB_ENV
-      - name: 3.安装依赖
-        run: |
+          echo "date=$(echo ${{ github.event.inputs.URL }} | cut -d"/" -f4)" >> $GITHUB_ENV
           sudo apt install python3 python3-pip aria2 zip p7zip-full tar
           sudo apt --fix-broken install
           sudo apt update --fix-missing
@@ -36,9 +37,9 @@ jobs:
           sudo systemctl stop alist
           sudo mv -f /home/runner/.config/rclone/data.db /opt/alist/data
           sudo systemctl start alist
-      - name: 4.下载系统包
+      - name: 2.下载系统包
         run: |
-          aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" ${{ env.latest_url }}
+          aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" ${{ github.event.inputs.URL }}
           if [[ "${{ env.action_build_version }}" == "" ]]; then
               aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" https://hugeota.d.miui.com/22.7.19/miui_CMIPRE_22.7.19_c47f96254e_12.0.zip
               echo "device=cmi" >> $GITHUB_ENV
@@ -48,7 +49,7 @@ jobs:
               echo "device=umi" >> $GITHUB_ENV
               echo "ORIGN_ZIP_NAME=miui_UMIPRE_22.7.19_c2ae8f91d4_12.0.zip" >> $GITHUB_ENV
           fi
-      - name: 5.解包
+      - name: 3.解包
         run: |
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/payload-dumper-go
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/brotli
@@ -58,7 +59,7 @@ jobs:
           mkdir -p "$GITHUB_WORKSPACE"/simages
           mkdir -p "$GITHUB_WORKSPACE"/zip
           mkdir -p "$GITHUB_WORKSPACE"/firmware
-          ZIP_NAME_THYME=$(echo ${{ env.latest_url }} | cut -d"/" -f5)
+          ZIP_NAME_THYME=$(echo ${{ github.event.inputs.URL }} | cut -d"/" -f5)
           7z x "$GITHUB_WORKSPACE"/$ZIP_NAME_THYME -r -o"$GITHUB_WORKSPACE"/THYME
           rm -rf "$GITHUB_WORKSPACE"/$ZIP_NAME_THYME
           7z x "$GITHUB_WORKSPACE"/${{ env.ORIGN_ZIP_NAME }} -r -o"$GITHUB_WORKSPACE"/${{ env.device }} firmware-update
@@ -87,7 +88,7 @@ jobs:
           sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/system.img "$GITHUB_WORKSPACE"/images
           rm -rf "$GITHUB_WORKSPACE"/images/product.img
           rm -rf "$GITHUB_WORKSPACE"/images/system.img
-      - name: 6.替换相关文件
+      - name: 4.替换相关文件
         run: |
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/device_features/*
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/overlay/DeviceAndroidConfig.apk
@@ -97,7 +98,6 @@ jobs:
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/DevicesOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay/
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/${{ env.device }}.xml "$GITHUB_WORKSPACE"/images/product/etc/device_features/
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system/system/data-app
-          #具体化
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor/recovery-from-boot.p
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor/bin/install-recovery.sh
           sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/vbmeta.img "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update
@@ -108,7 +108,7 @@ jobs:
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/dynamic_partitions_op_list "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}/* "$GITHUB_WORKSPACE"/images
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}
-      - name: 7.打包
+      - name: 5.打包
         run: |
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/mke2fs
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/e2fsdroid
@@ -166,7 +166,7 @@ jobs:
               mv "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_$date.zip "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"$date"_"$zipmd5"_12.0.zip
               echo "NEW_PACKAGE_NAME=miui_CMIPRE_"$date"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
           fi
-      - name: 8.上传到123盘
+      - name: 6.上传到123盘
         run: |
           if [[ "${{ env.device }}" == "umi" ]]; then
               rclone mkdir 123pan:/UMI_Packages
@@ -175,7 +175,7 @@ jobs:
               rclone mkdir 123pan:/CMI_Packages
               rclone sync -P ./zip/* 123pan:/CMI_Packages
           fi
-      - name: 9.发送打包成功邮件
+      - name: 7.发送打包成功邮件
         env:
           SMTP: ${{ secrets.SMTP }}
         run: |
@@ -186,7 +186,7 @@ jobs:
           else
               python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 Pro ${{env.date}} 已构建完成(123盘)" "包名为：${{env.NEW_PACKAGE_NAME}},下载地址为：https://www.123pan.com/s/jKv8Vv-ueDWd"
           fi
-      - name: 10.删除工作流运行
+      - name: 8.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
         with:
           token: ${{ github.token }}
