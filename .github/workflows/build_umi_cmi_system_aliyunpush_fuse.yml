@@ -1,4 +1,4 @@
-name: build_umi_system_artifact_fuse
+name: build_umi_cmi_system_aliyunpush_fuse
 on:
   workflow_dispatch:
     inputs:
@@ -16,14 +16,21 @@ jobs:
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@master
-      - name: 1.安装依赖
+      - name: 1.准备环境
         run: |
-          echo "action_build_version=$(cat /etc/issue | grep 20.04)" >>$GITHUB_ENV
           echo "date=$(echo ${{ github.event.inputs.URL }} | cut -d"/" -f4)" >> $GITHUB_ENV
+          if [[ "$(cat /etc/issue | grep 20.04)" == "" ]]; then
+              echo "device=cmi" >> $GITHUB_ENV
+              echo "ORIGN_ZIP_NAME=miui_CMIPRE_22.7.19_c47f96254e_12.0.zip" >> $GITHUB_ENV
+          else
+              echo "device=umi" >> $GITHUB_ENV
+              echo "ORIGN_ZIP_NAME=miui_UMIPRE_22.7.19_c2ae8f91d4_12.0.zip" >> $GITHUB_ENV
+          fi
           sudo apt install python3 python3-pip aria2 zip p7zip-full tar
           sudo apt --fix-broken install
           sudo apt update --fix-missing
           pip3 install --upgrade pip
+          pip3 install aliyundrive-webdav
           pip3 install pycryptodome
           pip3 install setuptools
           pip3 install docopt
@@ -37,19 +44,26 @@ jobs:
           sudo systemctl stop alist
           sudo mv -f /home/runner/.config/rclone/data.db /opt/alist/data
           sudo systemctl start alist
-      - name: 2.下载系统包
+      - name: 2.发送开始构建邮件
+        env:
+          SMTP: ${{ secrets.SMTP }}
+        run: |
+          if [[ "${{ env.device }}" == "umi" ]]; then
+              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 ${{env.date}} 开始构建(阿里云盘)" "小米10 ${{env.date}} 开始构建(阿里云盘)"
+              python3 "$GITHUB_WORKSPACE"/tools/mail.py "xy.511@qq.com" "小米10 ${{env.date}} 开始构建(阿里云盘)" "小米10 ${{env.date}} 开始构建(阿里云盘)"
+              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1743545584@qq.com" "小米10 ${{env.date}} 开始构建(阿里云盘)" "小米10 ${{env.date}} 开始构建(阿里云盘)"
+          else
+              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 Pro ${{env.date}} 开始构建(阿里云盘)" "小米10 Pro ${{env.date}} 开始构建(阿里云盘)"
+          fi
+      - name: 3.下载系统包
         run: |
           aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" ${{ github.event.inputs.URL }}
-          if [[ "${{ env.action_build_version }}" == "" ]]; then
+          if [[ "${{ env.device }}" == "cmi" ]]; then
               aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" https://hugeota.d.miui.com/22.7.19/miui_CMIPRE_22.7.19_c47f96254e_12.0.zip
-              echo "device=cmi" >> $GITHUB_ENV
-              echo "ORIGN_ZIP_NAME=miui_CMIPRE_22.7.19_c47f96254e_12.0.zip" >> $GITHUB_ENV
           else
               aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" https://hugeota.d.miui.com/22.7.19/miui_UMIPRE_22.7.19_c2ae8f91d4_12.0.zip
-              echo "device=umi" >> $GITHUB_ENV
-              echo "ORIGN_ZIP_NAME=miui_UMIPRE_22.7.19_c2ae8f91d4_12.0.zip" >> $GITHUB_ENV
           fi
-      - name: 3.解包
+      - name: 4.解包
         run: |
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/payload-dumper-go
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/brotli
@@ -88,7 +102,7 @@ jobs:
           sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/system.img "$GITHUB_WORKSPACE"/images
           rm -rf "$GITHUB_WORKSPACE"/images/product.img
           rm -rf "$GITHUB_WORKSPACE"/images/system.img
-      - name: 4.替换相关文件
+      - name: 5.替换相关文件
         run: |
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/device_features/*
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/overlay/DeviceAndroidConfig.apk
@@ -108,13 +122,12 @@ jobs:
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/dynamic_partitions_op_list "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}/* "$GITHUB_WORKSPACE"/images
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}
-      - name: 5.打包
+      - name: 6.打包
         run: |
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/mke2fs
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/e2fsdroid
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/img2simg
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/brotli
-          date=${{ env.date }}
           product_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/product | awk {'print $1'})
           product_size=$(echo "$product_size + 20971520" | bc)
           product_size=$(echo "$product_size / 4096" | bc)
@@ -152,35 +165,40 @@ jobs:
           sed -i "s/system_size/$system_size/g" "$GITHUB_WORKSPACE"/images/dynamic_partitions_op_list
           sed -i "s/system_ext_size/$system_ext_size/g" "$GITHUB_WORKSPACE"/images/dynamic_partitions_op_list
           if [[ "${{ env.device }}" == "umi" ]]; then
-              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_$date.zip "$GITHUB_WORKSPACE"/images/*
+              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
               sudo rm -rf "$GITHUB_WORKSPACE"/images
-              md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_$date.zip)
+              md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip)
               zipmd5=${md5:0:10}
-              mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_$date.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"$date"_"$zipmd5"_12.0.zip
-              echo "artifact_name=miui_UMIPRE_"$date"_"$zipmd5"_12.0" >> $GITHUB_ENV
+              mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
+              echo "NEW_PACKAGE_NAME=miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
           else
-              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_$date.zip "$GITHUB_WORKSPACE"/images/*
+              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
               sudo rm -rf "$GITHUB_WORKSPACE"/images
-              md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_$date.zip)
+              md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip)
               zipmd5=${md5:0:10}
-              mv "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_$date.zip "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"$date"_"$zipmd5"_12.0.zip
-              echo "artifact_name=miui_CMIPRE_"$date"_"$zipmd5"_12.0" >> $GITHUB_ENV
+              mv "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
+              echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
           fi
-      - name: 6.上传到Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.artifact_name }}
-          path: "./zip/*"
-      - name: 7.发送打包成功邮件
+      - name: 7.上传到阿里云盘
+        run: |
+          nohup aliyundrive-webdav --refresh-token ${{ secrets.REFRESHTOKEN }} --host 127.0.0.1 --port 5244 --auth-user yzdhz --auth-password ${{ secrets.PASSWORD }} >/dev/null 2>& 1 &
+          if [[ "${{ env.device }}" == "umi" ]]; then
+              rclone mkdir aliyun:/UMI_Packages
+              rclone sync -P ./zip/* aliyun:/UMI_Packages
+          else
+              rclone mkdir aliyun:/CMI_Packages
+              rclone sync -P ./zip/* aliyun:/CMI_Packages
+          fi
+      - name: 8.发送打包成功邮件
         env:
           SMTP: ${{ secrets.SMTP }}
         run: |
-          if [[ "${{ env.device }}" == "umi" ]]; then
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 ${{env.date}} 已构建完成(artifact)" "包名为：${{env.NEW_PACKAGE_NAME}}"
-          else
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 Pro ${{env.date}} 已构建完成(artifact)" "包名为：${{env.NEW_PACKAGE_NAME}}"
-          fi
-      - name: 8.删除工作流运行
+           if [[ "${{ env.device }}" == "umi" ]]; then
+               python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 ${{env.date}} 已构建完成(阿里云盘)" "包名为：${{env.NEW_PACKAGE_NAME}}"
+            else
+                python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 Pro ${{env.date}} 已构建完成(阿里云盘)" "包名为：${{env.NEW_PACKAGE_NAME}}"
+            fi
+      - name: 9.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
         with:
           token: ${{ github.token }}
