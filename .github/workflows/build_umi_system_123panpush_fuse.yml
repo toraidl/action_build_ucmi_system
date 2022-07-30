@@ -114,7 +114,6 @@ jobs:
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/e2fsdroid
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/img2simg
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/brotli
-          date=${{ env.date }}
           product_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/product | awk {'print $1'})
           product_size=$(echo "$product_size + 20971520" | bc)
           product_size=$(echo "$product_size / 4096" | bc)
@@ -152,19 +151,19 @@ jobs:
           sed -i "s/system_size/$system_size/g" "$GITHUB_WORKSPACE"/images/dynamic_partitions_op_list
           sed -i "s/system_ext_size/$system_ext_size/g" "$GITHUB_WORKSPACE"/images/dynamic_partitions_op_list
           if [[ "${{ env.device }}" == "umi" ]]; then
-              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_$date.zip "$GITHUB_WORKSPACE"/images/*
+              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
               sudo rm -rf "$GITHUB_WORKSPACE"/images
-              md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_$date.zip)
+              md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip)
               zipmd5=${md5:0:10}
-              mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_$date.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"$date"_"$zipmd5"_12.0.zip
-              echo "NEW_PACKAGE_NAME=miui_UMIPRE_"$date"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
+              mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
+              echo "NEW_PACKAGE_NAME=miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
           else
-              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_$date.zip "$GITHUB_WORKSPACE"/images/*
+              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
               sudo rm -rf "$GITHUB_WORKSPACE"/images
-              md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_$date.zip)
+              md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip)
               zipmd5=${md5:0:10}
-              mv "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_$date.zip "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"$date"_"$zipmd5"_12.0.zip
-              echo "NEW_PACKAGE_NAME=miui_CMIPRE_"$date"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
+              mv "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
+              echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
           fi
       - name: 6.上传到123盘
         run: |

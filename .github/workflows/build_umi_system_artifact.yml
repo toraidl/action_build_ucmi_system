@@ -175,12 +175,10 @@ jobs:
         env:
           SMTP: ${{ secrets.SMTP }}
         run: |
-          if [[ ${{ env.run_status }} == "true" ]]; then
-              if [[ "${{ env.device }}" == "umi" ]]; then
-                  python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 ${{env.date}} 已构建完成(artifact)" "包名为：${{env.NEW_PACKAGE_NAME}}"
-              else
-                  python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 Pro ${{env.date}} 已构建完成(artifact)" "包名为：${{env.NEW_PACKAGE_NAME}}"
-              fi
+          if [[ "${{ env.device }}" == "umi" ]]; then
+              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 ${{env.date}} 已构建完成(artifact)" "包名为：${{env.NEW_PACKAGE_NAME}}"
+          else
+              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 Pro ${{env.date}} 已构建完成(artifact)" "包名为：${{env.NEW_PACKAGE_NAME}}"
           fi
       - name: 8.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
