@@ -181,7 +181,7 @@ jobs:
           fi
       - name: 7.上传到阿里云盘
         run: |
-          nohup aliyundrive-webdav --refresh-token ${{ secrets.REFRESHTOKEN }} --host 127.0.0.1 --port 5244 --auth-user yzdhz --auth-password ${{ secrets.PASSWORD }} >/dev/null 2>& 1 &
+          nohup aliyundrive-webdav --refresh-token ${{ secrets.REFRESHTOKEN }} --host 127.0.0.1 --port 1987 --auth-user yzdhz --auth-password ${{ secrets.PASSWORD }} >/dev/null 2>& 1 &
           if [[ "${{ env.device }}" == "umi" ]]; then
               rclone mkdir aliyun:/UMI_Packages
               rclone sync -P ./zip/* aliyun:/UMI_Packages
