@@ -197,6 +197,7 @@ jobs:
               python3 "$GITHUB_WORKSPACE"/tools/mail.py "1743545584@qq.com" "小米10 ${{env.date}} 已构建完成(123盘)" "包名为：${{env.NEW_PACKAGE_NAME}},下载地址为：https://www.123pan.com/s/jKv8Vv-ueDWd"
           else
               python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 Pro ${{env.date}} 已构建完成(123盘)" "包名为：${{env.NEW_PACKAGE_NAME}},下载地址为：https://www.123pan.com/s/jKv8Vv-ueDWd"
+              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1321656658@qq.com" "小米10 Pro ${{env.date}} 已构建完成(123盘)" "包名为：${{env.NEW_PACKAGE_NAME}},下载地址为：https://www.123pan.com/s/jKv8Vv-ueDWd"
           fi
       - name: 9.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
