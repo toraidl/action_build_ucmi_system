@@ -108,17 +108,22 @@ jobs:
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/device_features/*
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/overlay/DeviceAndroidConfig.apk
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/overlay/DeviceConfig.apk
-          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/AospFrameworkResOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay/
-          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/DevicesAndroidOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay/
-          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/DevicesOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay/
-          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/${{ env.device }}.xml "$GITHUB_WORKSPACE"/images/product/etc/device_features/
+          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/AospFrameworkResOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay
+          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/DevicesAndroidOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay
+          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/DevicesOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay
+          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/${{ env.device }}.xml "$GITHUB_WORKSPACE"/images/product/etc/device_features
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system_ext/app/NQNfcNci/NQNfcNci.apk
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system_ext/app/NQNfcNci/oat
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system_ext/lib/libsn100nfc_nci_jni.so
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system_ext/lib/libsn100nfc-nci.so
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system_ext/lib64/libsn100nfc_nci_jni.so
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system_ext/lib64/libsn100nfc-nci.so
-          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/nfc/system_ext/* "$GITHUB_WORKSPACE"/images/system_ext/          
+          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/nfc/system_ext/app/NQNfcNci/NQNfcNci.apk "$GITHUB_WORKSPACE"/images/system_ext/app/NQNfcNci
+          sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}_files/nfc/system_ext/app/NQNfcNci/oat "$GITHUB_WORKSPACE"/images/system_ext/app/NQNfcNci
+          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/nfc/system_ext/lib/libsn100nfc_nci_jni.so "$GITHUB_WORKSPACE"/images/system_ext/lib
+          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/nfc/system_ext/lib/libsn100nfc-nci.so "$GITHUB_WORKSPACE"/images/system_ext/lib
+          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/nfc/system_ext/lib64/libsn100nfc_nci_jni.so "$GITHUB_WORKSPACE"/images/system_ext/lib64
+          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/nfc/system_ext/lib64/libsn100nfc-nci.so "$GITHUB_WORKSPACE"/images/system_ext/lib64
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor/recovery-from-boot.p
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor/bin/install-recovery.sh
           sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/vbmeta.img "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update
