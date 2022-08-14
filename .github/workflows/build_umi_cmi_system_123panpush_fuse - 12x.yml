@@ -98,10 +98,8 @@ jobs:
           rm -rf "$GITHUB_WORKSPACE"/payload
           rm -rf "$GITHUB_WORKSPACE"/PSYCHE
           sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/product.img "$GITHUB_WORKSPACE"/images
-          sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/system.img "$GITHUB_WORKSPACE"/images
           sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/system_ext.img "$GITHUB_WORKSPACE"/images
           rm -rf "$GITHUB_WORKSPACE"/images/product.img
-          rm -rf "$GITHUB_WORKSPACE"/images/system.img
           rm -rf "$GITHUB_WORKSPACE"/images/system_ext.img
       - name: 5.替换相关文件
         run: |
@@ -141,19 +139,17 @@ jobs:
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/img2simg
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/brotli
           product_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/product | awk {'print $1'})
-          product_size=$(echo "$product_size + 104857600" | bc)
+          product_size=$(echo "$product_size + 20971520" | bc)
           product_size=$(echo "$product_size / 4096" | bc)
           vendor_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/vendor | awk {'print $1'})
-          vendor_size=$(echo "$vendor_size + 104857600" | bc)
+          vendor_size=$(echo "$vendor_size + 15728640" | bc)
           vendor_size=$(echo "$vendor_size / 4096" | bc)
-          system_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system | awk {'print $1'})
-          system_size=$(echo "$system_size + 104857600" | bc)
-          system_size=$(echo "$system_size / 4096" | bc)
+          system_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system.img | awk {'print $1'})
           system_ext_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system_ext | awk {'print $1'})
-          system_ext_size=$(echo "$system_ext_size + 104857600" | bc)
+          system_ext_size=$(echo "$system_ext_size + 52428800" | bc)
           system_ext_size=$(echo "$system_ext_size / 4096" | bc)
           UTC=$(date -u +%s)
-          for i in product vendor system
+          for i in product vendor
           do
               sudo python3 "$GITHUB_WORKSPACE"/tools/fspatch.py "$GITHUB_WORKSPACE"/images/$i "$GITHUB_WORKSPACE"/images/TI_config/"$i"_fs_config
               "$GITHUB_WORKSPACE"/tools/mke2fs -O ^has_journal -L $i -I 256 -M /$i -m 0 -t ext4 -b 4096 "$GITHUB_WORKSPACE"/images/$i.img $(eval echo "$"$i"_size")
