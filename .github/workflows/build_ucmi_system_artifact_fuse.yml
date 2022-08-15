@@ -11,15 +11,15 @@ jobs:
       fail-fast: true
       matrix:
         runs-on:
-          - ubuntu-18.04
           - ubuntu-20.04
+          - ubuntu-22.04
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@master
       - name: 1.准备环境
         run: |
           echo "date=$(echo ${{ github.event.inputs.URL }} | cut -d"/" -f4)" >> $GITHUB_ENV
-          if [[ "$(cat /etc/issue | grep 20.04)" == "" ]]; then
+          if [[ "$(cat /etc/issue | grep 22.04)" == "" ]]; then
               echo "device=cmi" >> $GITHUB_ENV
               echo "ORIGN_ZIP_NAME=miui_CMIPRE_22.7.19_c47f96254e_12.0.zip" >> $GITHUB_ENV
           else
