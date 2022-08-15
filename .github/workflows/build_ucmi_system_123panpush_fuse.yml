@@ -1,4 +1,4 @@
-name: build_umi_cmi_system_123panpush_fuse - 12x
+name: build_ucmi_system_123panpush_fuse
 on:
   workflow_dispatch:
     inputs:
@@ -131,11 +131,11 @@ jobs:
           product_size=$(echo "$product_size + 20971520" | bc)
           product_size=$(echo "$product_size / 4096" | bc)
           vendor_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/vendor | awk {'print $1'})
-          vendor_size=$(echo "$vendor_size + 15728640" | bc)
+          vendor_size=$(echo "$vendor_size + 9895936" | bc)
           vendor_size=$(echo "$vendor_size / 4096" | bc)
           system_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system.img | awk {'print $1'})
           system_ext_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system_ext | awk {'print $1'})
-          system_ext_size=$(echo "$system_ext_size + 52428800" | bc)
+          system_ext_size=$(echo "$system_ext_size + 23488103" | bc)
           system_ext_size=$(echo "$system_ext_size / 4096" | bc)
           UTC=$(date -u +%s)
           for i in product vendor system_ext

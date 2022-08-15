@@ -1,4 +1,4 @@
-name: build_umi_cmi_system_artifact_fuse
+name: build_ucmi_system_aliyunpush_fuse
 on:
   workflow_dispatch:
     inputs:
@@ -30,6 +30,7 @@ jobs:
           sudo apt --fix-broken install
           sudo apt update --fix-missing
           pip3 install --upgrade pip
+          pip3 install aliyundrive-webdav
           pip3 install pycryptodome
           pip3 install setuptools
           pip3 install docopt
@@ -48,11 +49,11 @@ jobs:
           SMTP: ${{ secrets.SMTP }}
         run: |
           if [[ "${{ env.device }}" == "umi" ]]; then
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 ${{env.date}} 开始构建(artifact)" "小米10 ${{env.date}} 开始构建(artifact)"
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "xy.511@qq.com" "小米10 ${{env.date}} 开始构建(artifact)" "小米10 ${{env.date}} 开始构建(artifact)"
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1743545584@qq.com" "小米10 ${{env.date}} 开始构建(artifact)" "小米10 ${{env.date}} 开始构建(artifact)"
+              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 ${{env.date}} 开始构建(阿里云盘)" "小米10 ${{env.date}} 开始构建(阿里云盘)"
+              python3 "$GITHUB_WORKSPACE"/tools/mail.py "xy.511@qq.com" "小米10 ${{env.date}} 开始构建(阿里云盘)" "小米10 ${{env.date}} 开始构建(阿里云盘)"
+              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1743545584@qq.com" "小米10 ${{env.date}} 开始构建(阿里云盘)" "小米10 ${{env.date}} 开始构建(阿里云盘)"
           else
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 Pro ${{env.date}} 开始构建(artifact)" "小米10 Pro ${{env.date}} 开始构建(artifact)"
+              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 Pro ${{env.date}} 开始构建(阿里云盘)" "小米10 Pro ${{env.date}} 开始构建(阿里云盘)"
           fi
       - name: 3.下载系统包
         run: |
@@ -66,15 +67,15 @@ jobs:
         run: |
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/payload-dumper-go
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/brotli
-          mkdir -p "$GITHUB_WORKSPACE"/THYME
+          mkdir -p "$GITHUB_WORKSPACE"/PSYCHE
           mkdir -p "$GITHUB_WORKSPACE"/${{ env.device }}
           mkdir -p "$GITHUB_WORKSPACE"/images
           mkdir -p "$GITHUB_WORKSPACE"/simages
           mkdir -p "$GITHUB_WORKSPACE"/zip
           mkdir -p "$GITHUB_WORKSPACE"/firmware
-          ZIP_NAME_THYME=$(echo ${{ github.event.inputs.URL }} | cut -d"/" -f5)
-          7z x "$GITHUB_WORKSPACE"/$ZIP_NAME_THYME -r -o"$GITHUB_WORKSPACE"/THYME
-          rm -rf "$GITHUB_WORKSPACE"/$ZIP_NAME_THYME
+          ZIP_NAME_PSYCHE=$(echo ${{ github.event.inputs.URL }} | cut -d"/" -f5)
+          7z x "$GITHUB_WORKSPACE"/$ZIP_NAME_PSYCHE -r -o"$GITHUB_WORKSPACE"/PSYCHE
+          rm -rf "$GITHUB_WORKSPACE"/$ZIP_NAME_PSYCHE
           7z x "$GITHUB_WORKSPACE"/${{ env.ORIGN_ZIP_NAME }} -r -o"$GITHUB_WORKSPACE"/${{ env.device }} firmware-update
           for i in odm vendor
           do
@@ -92,25 +93,25 @@ jobs:
           rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor.img
           for i in system product system_ext
           do
-              "$GITHUB_WORKSPACE"/tools/payload-dumper-go -p $i "$GITHUB_WORKSPACE"/THYME/payload.bin
+              "$GITHUB_WORKSPACE"/tools/payload-dumper-go -p $i "$GITHUB_WORKSPACE"/PSYCHE/payload.bin
               mv "$GITHUB_WORKSPACE"/payload/$i.img "$GITHUB_WORKSPACE"/images/$i.img
           done
           rm -rf "$GITHUB_WORKSPACE"/payload
-          rm -rf "$GITHUB_WORKSPACE"/THYME
+          rm -rf "$GITHUB_WORKSPACE"/PSYCHE
           sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/product.img "$GITHUB_WORKSPACE"/images
-          sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/system.img "$GITHUB_WORKSPACE"/images
+          sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/system_ext.img "$GITHUB_WORKSPACE"/images
           rm -rf "$GITHUB_WORKSPACE"/images/product.img
-          rm -rf "$GITHUB_WORKSPACE"/images/system.img
+          rm -rf "$GITHUB_WORKSPACE"/images/system_ext.img
       - name: 5.替换相关文件
         run: |
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/device_features/*
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/overlay/DeviceAndroidConfig.apk
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/overlay/DeviceConfig.apk
-          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/AospFrameworkResOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay/
-          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/DevicesAndroidOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay/
-          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/DevicesOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay/
-          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/${{ env.device }}.xml "$GITHUB_WORKSPACE"/images/product/etc/device_features/
-          sudo rm -rf "$GITHUB_WORKSPACE"/images/system/system/data-app
+          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/AospFrameworkResOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay
+          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/DevicesAndroidOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay
+          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/DevicesOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay
+          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/${{ env.device }}.xml "$GITHUB_WORKSPACE"/images/product/etc/device_features
+          sudo unzip -o "$GITHUB_WORKSPACE"/${{ env.device }}_files/nfc.zip -d "$GITHUB_WORKSPACE"/images/system_ext
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor/recovery-from-boot.p
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor/bin/install-recovery.sh
           sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/vbmeta.img "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update
@@ -131,14 +132,14 @@ jobs:
           product_size=$(echo "$product_size + 20971520" | bc)
           product_size=$(echo "$product_size / 4096" | bc)
           vendor_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/vendor | awk {'print $1'})
-          vendor_size=$(echo "$vendor_size + 15728640" | bc)
+          vendor_size=$(echo "$vendor_size + 9895936" | bc)
           vendor_size=$(echo "$vendor_size / 4096" | bc)
-          system_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system | awk {'print $1'})
-          system_size=$(echo "$system_size + 103809024" | bc)
-          system_size=$(echo "$system_size / 4096" | bc)
-          system_ext_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system_ext.img | awk {'print $1'})
+          system_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system.img | awk {'print $1'})
+          system_ext_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system_ext | awk {'print $1'})
+          system_ext_size=$(echo "$system_ext_size + 23488103" | bc)
+          system_ext_size=$(echo "$system_ext_size / 4096" | bc)
           UTC=$(date -u +%s)
-          for i in product vendor system
+          for i in product vendor system_ext
           do
               sudo python3 "$GITHUB_WORKSPACE"/tools/fspatch.py "$GITHUB_WORKSPACE"/images/$i "$GITHUB_WORKSPACE"/images/TI_config/"$i"_fs_config
               "$GITHUB_WORKSPACE"/tools/mke2fs -O ^has_journal -L $i -I 256 -M /$i -m 0 -t ext4 -b 4096 "$GITHUB_WORKSPACE"/images/$i.img $(eval echo "$"$i"_size")
@@ -169,29 +170,34 @@ jobs:
               md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip)
               zipmd5=${md5:0:10}
               mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
-              echo "NEW_PACKAGE_NAME=miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0" >> $GITHUB_ENV
+              echo "NEW_PACKAGE_NAME=miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
           else
               sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
               sudo rm -rf "$GITHUB_WORKSPACE"/images
               md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip)
               zipmd5=${md5:0:10}
               mv "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
-              echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0" >> $GITHUB_ENV
+              echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
           fi
-      - name: 7.上传到Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: ${{ env.NEW_PACKAGE_NAME }}
-          path: "./zip/*"
+      - name: 7.上传到阿里云盘
+        run: |
+          nohup aliyundrive-webdav --refresh-token ${{ secrets.REFRESHTOKEN }} --host 127.0.0.1 --port 1987 --auth-user yzdhz --auth-password ${{ secrets.PASSWORD }} >/dev/null 2>& 1 &
+          if [[ "${{ env.device }}" == "umi" ]]; then
+              rclone mkdir aliyun:/UMI_Packages
+              rclone sync -P ./zip/* aliyun:/UMI_Packages
+          else
+              rclone mkdir aliyun:/CMI_Packages
+              rclone sync -P ./zip/* aliyun:/CMI_Packages
+          fi
       - name: 8.发送打包成功邮件
         env:
           SMTP: ${{ secrets.SMTP }}
         run: |
-          if [[ "${{ env.device }}" == "umi" ]]; then
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 ${{env.date}} 已构建完成(artifact)" "包名为：${{env.NEW_PACKAGE_NAME}}"
-          else
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 Pro ${{env.date}} 已构建完成(artifact)" "包名为：${{env.NEW_PACKAGE_NAME}}"
-          fi
+           if [[ "${{ env.device }}" == "umi" ]]; then
+               python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 ${{env.date}} 已构建完成(阿里云盘)" "包名为：${{env.NEW_PACKAGE_NAME}}"
+            else
+                python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 Pro ${{env.date}} 已构建完成(阿里云盘)" "包名为：${{env.NEW_PACKAGE_NAME}}"
+            fi
       - name: 9.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
         with:
