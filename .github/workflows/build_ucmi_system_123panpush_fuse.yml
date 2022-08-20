@@ -194,7 +194,6 @@ jobs:
           vendor_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/vendor | awk {'print $1'})
           vendor_size=$(echo "$vendor_size + 9895936" | bc)
           vendor_size=$(echo "$vendor_size / 4096" | bc)
-          system_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system.img | awk {'print $1'})
           system_ext_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system_ext | awk {'print $1'})
           system_ext_size=$(echo "$system_ext_size + 23488103" | bc)
           system_ext_size=$(echo "$system_ext_size / 4096" | bc)
