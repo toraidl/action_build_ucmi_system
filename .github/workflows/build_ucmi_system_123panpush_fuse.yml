@@ -20,13 +20,13 @@ jobs:
         run: |
           echo "date=$(echo ${{ github.event.inputs.URL }} | cut -d"/" -f4)" >> $GITHUB_ENV
           if [[ "$(cat /etc/issue | grep 22.04)" == "" ]]; then
-              echo "device=cmi" >> $GITHUB_ENV
-              echo "ORIGN_ZIP_NAME=miui_CMIPRE_22.7.19_c47f96254e_12.0.zip" >> $GITHUB_ENV
+            echo "device=cmi" >> $GITHUB_ENV
+            echo "ORIGN_ZIP_NAME=miui_CMIPRE_22.7.19_c47f96254e_12.0.zip" >> $GITHUB_ENV
           else
-              echo "device=umi" >> $GITHUB_ENV
-              echo "ORIGN_ZIP_NAME=miui_UMIPRE_22.7.19_c2ae8f91d4_12.0.zip" >> $GITHUB_ENV
+            echo "device=umi" >> $GITHUB_ENV
+            echo "ORIGN_ZIP_NAME=miui_UMIPRE_22.7.19_c2ae8f91d4_12.0.zip" >> $GITHUB_ENV
           fi
-          sudo apt install python3 python3-pip aria2 zip p7zip-full tar
+          sudo apt install python3 python3-pip aria2 zip p7zip-full tar zipalign
           sudo apt --fix-broken install
           sudo apt update --fix-missing
           pip3 install --upgrade pip
@@ -48,19 +48,19 @@ jobs:
           SMTP: ${{ secrets.SMTP }}
         run: |
           if [[ "${{ env.device }}" == "umi" ]]; then
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 ${{env.date}} 开始构建(123盘)" "小米10 ${{env.date}} 开始构建(123盘)"
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "xy.511@qq.com" "小米10 ${{env.date}} 开始构建(123盘)" "小米10 ${{env.date}} 开始构建(123盘)"
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1743545584@qq.com" "小米10 ${{env.date}} 开始构建(123盘)" "小米10 ${{env.date}} 开始构建(123盘)"
+            python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 ${{env.date}} 开始构建(123盘)" "小米10 ${{env.date}} 开始构建(123盘)"
+            python3 "$GITHUB_WORKSPACE"/tools/mail.py "xy.511@qq.com" "小米10 ${{env.date}} 开始构建(123盘)" "小米10 ${{env.date}} 开始构建(123盘)"
+            python3 "$GITHUB_WORKSPACE"/tools/mail.py "1743545584@qq.com" "小米10 ${{env.date}} 开始构建(123盘)" "小米10 ${{env.date}} 开始构建(123盘)"
           else
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 Pro ${{env.date}} 开始构建(123盘)" "小米10 Pro ${{env.date}} 开始构建(123盘)"
+            python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 Pro ${{env.date}} 开始构建(123盘)" "小米10 Pro ${{env.date}} 开始构建(123盘)"
           fi
       - name: 3.下载系统包
         run: |
           aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" ${{ github.event.inputs.URL }}
           if [[ "${{ env.device }}" == "cmi" ]]; then
-              aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" https://hugeota.d.miui.com/22.7.19/miui_CMIPRE_22.7.19_c47f96254e_12.0.zip
+            aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" https://hugeota.d.miui.com/22.7.19/miui_CMIPRE_22.7.19_c47f96254e_12.0.zip
           else
-              aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" https://hugeota.d.miui.com/22.7.19/miui_UMIPRE_22.7.19_c2ae8f91d4_12.0.zip
+            aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" https://hugeota.d.miui.com/22.7.19/miui_UMIPRE_22.7.19_c2ae8f91d4_12.0.zip
           fi
       - name: 4.解包
         run: |
@@ -78,9 +78,9 @@ jobs:
           7z x "$GITHUB_WORKSPACE"/${{ env.ORIGN_ZIP_NAME }} -r -o"$GITHUB_WORKSPACE"/${{ env.device }} firmware-update
           for i in odm vendor
           do
-              7z x "$GITHUB_WORKSPACE"/${{ env.ORIGN_ZIP_NAME }} -o"$GITHUB_WORKSPACE"/${{ env.device }} $i.transfer.list
-              7z x "$GITHUB_WORKSPACE"/${{ env.ORIGN_ZIP_NAME }} -o"$GITHUB_WORKSPACE"/${{ env.device }} $i.patch.dat
-              7z x "$GITHUB_WORKSPACE"/${{ env.ORIGN_ZIP_NAME }} -o"$GITHUB_WORKSPACE"/${{ env.device }} $i.new.dat.br
+            7z x "$GITHUB_WORKSPACE"/${{ env.ORIGN_ZIP_NAME }} -o"$GITHUB_WORKSPACE"/${{ env.device }} $i.transfer.list
+            7z x "$GITHUB_WORKSPACE"/${{ env.ORIGN_ZIP_NAME }} -o"$GITHUB_WORKSPACE"/${{ env.device }} $i.patch.dat
+            7z x "$GITHUB_WORKSPACE"/${{ env.ORIGN_ZIP_NAME }} -o"$GITHUB_WORKSPACE"/${{ env.device }} $i.new.dat.br
           done
           "$GITHUB_WORKSPACE"/tools/brotli -d "$GITHUB_WORKSPACE"/${{ env.device }}/vendor.new.dat.br
           rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor.new.dat.br
@@ -92,8 +92,8 @@ jobs:
           rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor.img
           for i in system product system_ext
           do
-              "$GITHUB_WORKSPACE"/tools/payload-dumper-go -p $i "$GITHUB_WORKSPACE"/PSYCHE/payload.bin
-              mv "$GITHUB_WORKSPACE"/payload/$i.img "$GITHUB_WORKSPACE"/images/$i.img
+            "$GITHUB_WORKSPACE"/tools/payload-dumper-go -p $i "$GITHUB_WORKSPACE"/PSYCHE/payload.bin
+            mv "$GITHUB_WORKSPACE"/payload/$i.img "$GITHUB_WORKSPACE"/images/$i.img
           done
           rm -rf "$GITHUB_WORKSPACE"/payload
           rm -rf "$GITHUB_WORKSPACE"/PSYCHE
@@ -121,6 +121,63 @@ jobs:
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/dynamic_partitions_op_list "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}/* "$GITHUB_WORKSPACE"/images
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}
+          #fix 无线充动画
+          chmod 777 "$GITHUB_WORKSPACE"/tools/apktool.jar
+          Apktool="java -jar "$GITHUB_WORKSPACE"/tools/apktool.jar"
+          mkdir -p "$GITHUB_WORKSPACE"/MiuiSystemUI/one/MiuiSystemUI/
+          mkdir -p "$GITHUB_WORKSPACE"/MiuiSystemUI/two/
+          mkdir -p "$GITHUB_WORKSPACE"/MiuiSystemUI/three/
+          unzip -o "$GITHUB_WORKSPACE"/images/system_ext/priv-app/MiuiSystemUI/MiuiSystemUI.apk 'classes*.dex' -d "$GITHUB_WORKSPACE"/MiuiSystemUI/one/
+          cd "$GITHUB_WORKSPACE"/MiuiSystemUI/one/
+          sudo 7z a -tzip "$GITHUB_WORKSPACE"/MiuiSystemUI/one/MiuiSystemUI.apk ./*
+          $Apktool d -q -r -f -o "$GITHUB_WORKSPACE"/MiuiSystemUI/one/MiuiSystemUI/ "$GITHUB_WORKSPACE"/MiuiSystemUI/one/MiuiSystemUI.apk
+          uisystem=com/android/keyguard/charge/container/MiuiChargeAnimationView.smali
+          sudo sed -i '/^.method protected updateSizeForScreenSizeChange()V/,/^.end method/d' "$GITHUB_WORKSPACE"/MiuiSystemUI/one/MiuiSystemUI/smali*/com/android/keyguard/charge/container/MiuiChargeAnimationView.smali
+          mod1=$(cat "$GITHUB_WORKSPACE"/${{ env.device }}_files/updateSizeForScreenSizeChange.smali)   
+          echo "$mod1" >> "$GITHUB_WORKSPACE"/MiuiSystemUI/one/MiuiSystemUI/smali*/com/android/keyguard/charge/container/MiuiChargeAnimationView.smali
+          mkdir -p "$GITHUB_WORKSPACE"/MiuiSystemUI/two/MiuiSystemUI/smali/$uisystem
+          cp -rf "$GITHUB_WORKSPACE"/MiuiSystemUI/one/MiuiSystemUI/smali*/$uisystem "$GITHUB_WORKSPACE"/MiuiSystemUI/two/MiuiSystemUI/smali/$uisystem
+          cp -rf "$GITHUB_WORKSPACE"/MiuiSystemUI/one/MiuiSystemUI/apktool.yml "$GITHUB_WORKSPACE"/MiuiSystemUI/two/MiuiSystemUI/
+          $Apktool b -q -f -o "$GITHUB_WORKSPACE"/MiuiSystemUI/two/MiuiSystemUI.apk "$GITHUB_WORKSPACE"/MiuiSystemUI/two/MiuiSystemUI/
+          filepath="$GITHUB_WORKSPACE"/MiuiSystemUI/one/
+          for file in `ls -a $filepath`
+          do
+            if [ "${file##*.}"x = "dex"x ];then
+              old=$(echo $file | tr -d "a-zA-Z" | tr -d ".")
+              if [ -Z $old ];then
+                 old=1
+              fi
+              new=$(echo $old|awk '{for(i=1;i<=NF;i++){$i+=1}}1')
+              cp -rf "$GITHUB_WORKSPACE"/MiuiSystemUI/one/$file "$GITHUB_WORKSPACE"/MiuiSystemUI/three/classes$new.dex
+            fi
+          done
+          unzip -o "$GITHUB_WORKSPACE"/MiuiSystemUI/two/MiuiSystemUI.apk -d "$GITHUB_WORKSPACE"/MiuiSystemUI/three/
+          ls -a "$GITHUB_WORKSPACE"/MiuiSystemUI/three/
+          cd "$GITHUB_WORKSPACE"/MiuiSystemUI/three/
+          sudo 7z a "$GITHUB_WORKSPACE"/images/system_ext/priv-app/MiuiSystemUI/MiuiSystemUI.apk ./*.dex -mx0
+          cd "$GITHUB_WORKSPACE"/${{ env.device }}_files/systemui
+          sudo 7z a "$GITHUB_WORKSPACE"/images/system_ext/priv-app/MiuiSystemUI/MiuiSystemUI.apk ./* -mx0
+          cd "$GITHUB_WORKSPACE"
+          sudo mv "$GITHUB_WORKSPACE"/images/system_ext/priv-app/MiuiSystemUI/MiuiSystemUI.apk "$GITHUB_WORKSPACE"/MiuiSystemUI/MiuiSystemUI.apk
+          sudo zipalign -v 4 "$GITHUB_WORKSPACE"/MiuiSystemUI/MiuiSystemUI.apk "$GITHUB_WORKSPACE"/images/system_ext/priv-app/MiuiSystemUI/MiuiSystemUI.apk >/dev/null
+          #删除预装
+          sudo rm -rf "$GITHUB_WORKSPACE"/images/system/system/app/MSA
+          for files in MIShop MIUINewHome MIUIGameCenter MIUIHuanji MIUIYoupin MIUIDuokanReader MIUIEmail MIUIVipAccount SmartHome MIMediaEditor MIGalleryLockscreen Health
+          do
+            dataapp=$(find "$GITHUB_WORKSPACE"/images/system/system/data-app/ -name $files)
+            sudo rm -rf $dataapp
+          done
+          for files in MIUIMusic MIUIVideo
+          do
+            prepkg=$(find "$GITHUB_WORKSPACE"/images/system/system/priv-app/ -name $files)
+            sudo rm -rf $prepkg
+          done
+          #修改props
+          sudo sed -i 's/ro.product.mod_device=[^*]*/ro.product.mod_device=umi_pre/' "$GITHUB_WORKSPACE"/images/system/system/build.prop
+          sudo sed -i 's/ro.miui.cust_device=[^*]*/ro.miui.cust_device=umi/' "$GITHUB_WORKSPACE"/images/system/system/build.prop
+          #声音动效动画
+          sudo unzip -o -q "$GITHUB_WORKSPACE"/${{ env.device }}_files/etc.zip -d "$GITHUB_WORKSPACE"/images/system/system/etc/audio/
+
       - name: 6.打包
         run: |
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/mke2fs
@@ -139,23 +196,23 @@ jobs:
           system_ext_size=$(echo "$system_ext_size / 4096" | bc)
           for i in product vendor system_ext
           do
-              sudo python3 "$GITHUB_WORKSPACE"/tools/fspatch.py "$GITHUB_WORKSPACE"/images/$i "$GITHUB_WORKSPACE"/images/TI_config/"$i"_fs_config
-              "$GITHUB_WORKSPACE"/tools/mke2fs -O ^has_journal -L $i -I 256 -M /$i -m 0 -t ext4 -b 4096 "$GITHUB_WORKSPACE"/images/$i.img $(eval echo "$"$i"_size")
-              sudo "$GITHUB_WORKSPACE"/tools/e2fsdroid -e -T 1230768000 -C "$GITHUB_WORKSPACE"/images/TI_config/"$i"_fs_config -S "$GITHUB_WORKSPACE"/images/TI_config/"$i"_file_contexts -f "$GITHUB_WORKSPACE"/images/$i -a /$i "$GITHUB_WORKSPACE"/images/$i.img
-              resize2fs -f -M "$GITHUB_WORKSPACE"/images/$i.img
-              eval "$i"_size=$(du -sb "$GITHUB_WORKSPACE"/images/$i.img | awk {'print $1'})
-              sudo rm -rf "$GITHUB_WORKSPACE"/images/$i
+            sudo python3 "$GITHUB_WORKSPACE"/tools/fspatch.py "$GITHUB_WORKSPACE"/images/$i "$GITHUB_WORKSPACE"/images/TI_config/"$i"_fs_config
+            "$GITHUB_WORKSPACE"/tools/mke2fs -O ^has_journal -L $i -I 256 -M /$i -m 0 -t ext4 -b 4096 "$GITHUB_WORKSPACE"/images/$i.img $(eval echo "$"$i"_size")
+            sudo "$GITHUB_WORKSPACE"/tools/e2fsdroid -e -T 1230768000 -C "$GITHUB_WORKSPACE"/images/TI_config/"$i"_fs_config -S "$GITHUB_WORKSPACE"/images/TI_config/"$i"_file_contexts -f "$GITHUB_WORKSPACE"/images/$i -a /$i "$GITHUB_WORKSPACE"/images/$i.img
+            resize2fs -f -M "$GITHUB_WORKSPACE"/images/$i.img
+            eval "$i"_size=$(du -sb "$GITHUB_WORKSPACE"/images/$i.img | awk {'print $1'})
+            sudo rm -rf "$GITHUB_WORKSPACE"/images/$i
           done
           sudo rm -rf "$GITHUB_WORKSPACE"/images/TI_config
           for i in product system system_ext vendor
           do
-              "$GITHUB_WORKSPACE"/tools/img2simg "$GITHUB_WORKSPACE"/images/$i.img "$GITHUB_WORKSPACE"/simages/$i.img
-              rm -rf "$GITHUB_WORKSPACE"/images/$i.img
-              python3 "$GITHUB_WORKSPACE"/tools/img2sdat.py "$GITHUB_WORKSPACE"/simages/$i.img -o "$GITHUB_WORKSPACE"/simages/ -v 4 -p $i
-              rm -rf "$GITHUB_WORKSPACE"/simages/$i.img
-              "$GITHUB_WORKSPACE"/tools/brotli -q 5 "$GITHUB_WORKSPACE"/simages/$i.new.dat -o "$GITHUB_WORKSPACE"/images/$i.new.dat.br
-              mv "$GITHUB_WORKSPACE"/simages/$i.transfer.list "$GITHUB_WORKSPACE"/simages/$i.patch.dat "$GITHUB_WORKSPACE"/images
-              rm -rf "$GITHUB_WORKSPACE"/simages/$i.new.dat
+            "$GITHUB_WORKSPACE"/tools/img2simg "$GITHUB_WORKSPACE"/images/$i.img "$GITHUB_WORKSPACE"/simages/$i.img
+            rm -rf "$GITHUB_WORKSPACE"/images/$i.img
+            python3 "$GITHUB_WORKSPACE"/tools/img2sdat.py "$GITHUB_WORKSPACE"/simages/$i.img -o "$GITHUB_WORKSPACE"/simages/ -v 4 -p $i
+            rm -rf "$GITHUB_WORKSPACE"/simages/$i.img
+            "$GITHUB_WORKSPACE"/tools/brotli -q 5 "$GITHUB_WORKSPACE"/simages/$i.new.dat -o "$GITHUB_WORKSPACE"/images/$i.new.dat.br
+            mv "$GITHUB_WORKSPACE"/simages/$i.transfer.list "$GITHUB_WORKSPACE"/simages/$i.patch.dat "$GITHUB_WORKSPACE"/images
+            rm -rf "$GITHUB_WORKSPACE"/simages/$i.new.dat
           done
           rm -rf "$GITHUB_WORKSPACE"/simages
           sed -i "s/product_size/$product_size/g" "$GITHUB_WORKSPACE"/images/dynamic_partitions_op_list
@@ -163,40 +220,40 @@ jobs:
           sed -i "s/system_size/$system_size/g" "$GITHUB_WORKSPACE"/images/dynamic_partitions_op_list
           sed -i "s/system_ext_size/$system_ext_size/g" "$GITHUB_WORKSPACE"/images/dynamic_partitions_op_list
           if [[ "${{ env.device }}" == "umi" ]]; then
-              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
-              sudo rm -rf "$GITHUB_WORKSPACE"/images
-              md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip)
-              zipmd5=${md5:0:10}
-              mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
-              echo "NEW_PACKAGE_NAME=miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
+            sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
+            sudo rm -rf "$GITHUB_WORKSPACE"/images
+            md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip)
+            zipmd5=${md5:0:10}
+            mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
+            echo "NEW_PACKAGE_NAME=miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
           else
-              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
-              sudo rm -rf "$GITHUB_WORKSPACE"/images
-              md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip)
-              zipmd5=${md5:0:10}
-              mv "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
-              echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
+            sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
+            sudo rm -rf "$GITHUB_WORKSPACE"/images
+            md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip)
+            zipmd5=${md5:0:10}
+            mv "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
+            echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
           fi
       - name: 7.上传到123盘
         run: |
           if [[ "${{ env.device }}" == "umi" ]]; then
-              rclone mkdir 123pan:/UMI_Packages
-              rclone sync -P ./zip/* 123pan:/UMI_Packages
+            rclone mkdir 123pan:/UMI_Packages
+            rclone sync -P ./zip/* 123pan:/UMI_Packages
           else
-              rclone mkdir 123pan:/CMI_Packages
-              rclone sync -P ./zip/* 123pan:/CMI_Packages
+            rclone mkdir 123pan:/CMI_Packages
+            rclone sync -P ./zip/* 123pan:/CMI_Packages
           fi
       - name: 8.发送打包成功邮件
         env:
           SMTP: ${{ secrets.SMTP }}
         run: |
           if [[ "${{ env.device }}" == "umi" ]]; then
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 ${{env.date}} 已构建完成(123盘)" "包名为：${{env.NEW_PACKAGE_NAME}},下载地址为：https://www.123pan.com/s/jKv8Vv-ueDWd"
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "xy.511@qq.com" "小米10 ${{env.date}} 已构建完成(123盘)" "包名为：${{env.NEW_PACKAGE_NAME}},下载地址为：https://www.123pan.com/s/jKv8Vv-ueDWd"
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1743545584@qq.com" "小米10 ${{env.date}} 已构建完成(123盘)" "包名为：${{env.NEW_PACKAGE_NAME}},下载地址为：https://www.123pan.com/s/jKv8Vv-ueDWd"
+            python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 ${{env.date}} 已构建完成(123盘)" "包名为：${{env.NEW_PACKAGE_NAME}},下载地址为：https://www.123pan.com/s/jKv8Vv-ueDWd"
+            python3 "$GITHUB_WORKSPACE"/tools/mail.py "xy.511@qq.com" "小米10 ${{env.date}} 已构建完成(123盘)" "包名为：${{env.NEW_PACKAGE_NAME}},下载地址为：https://www.123pan.com/s/jKv8Vv-ueDWd"
+            python3 "$GITHUB_WORKSPACE"/tools/mail.py "1743545584@qq.com" "小米10 ${{env.date}} 已构建完成(123盘)" "包名为：${{env.NEW_PACKAGE_NAME}},下载地址为：https://www.123pan.com/s/jKv8Vv-ueDWd"
           else
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 Pro ${{env.date}} 已构建完成(123盘)" "包名为：${{env.NEW_PACKAGE_NAME}},下载地址为：https://www.123pan.com/s/jKv8Vv-ueDWd"
-              python3 "$GITHUB_WORKSPACE"/tools/mail.py "1321656658@qq.com" "小米10 Pro ${{env.date}} 已构建完成(123盘)" "包名为：${{env.NEW_PACKAGE_NAME}},下载地址为：https://www.123pan.com/s/jKv8Vv-ueDWd"
+            python3 "$GITHUB_WORKSPACE"/tools/mail.py "1987836456@qq.com" "小米10 Pro ${{env.date}} 已构建完成(123盘)" "包名为：${{env.NEW_PACKAGE_NAME}},下载地址为：https://www.123pan.com/s/jKv8Vv-ueDWd"
+            python3 "$GITHUB_WORKSPACE"/tools/mail.py "1321656658@qq.com" "小米10 Pro ${{env.date}} 已构建完成(123盘)" "包名为：${{env.NEW_PACKAGE_NAME}},下载地址为：https://www.123pan.com/s/jKv8Vv-ueDWd"
           fi
       - name: 9.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
