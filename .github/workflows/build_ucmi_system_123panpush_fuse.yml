@@ -144,9 +144,9 @@ jobs:
           $Apktool b -q -f -o "$GITHUB_WORKSPACE"/MiuiSystemUI/two/MiuiSystemUI.apk "$GITHUB_WORKSPACE"/MiuiSystemUI/two/MiuiSystemUI/
           filepath="$GITHUB_WORKSPACE"/MiuiSystemUI/one/
           for file in $(ls -a $filepath); do
-              if [[ "${file##*.}"x = "dex"x ]]; then
+              if [ "${file##*.}"x = "dex"x ]; then
                   old=$(echo $file | tr -d "a-zA-Z" | tr -d ".")
-                  if [[ -Z $old ]]; then
+                  if [ -Z $old ]; then
                       old=1
                   fi
                   new=$(echo $old | awk '{for(i=1;i<=NF;i++){$i+=1}}1')
