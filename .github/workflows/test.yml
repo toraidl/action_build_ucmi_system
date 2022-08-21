@@ -1,0 +1,15 @@
+name: test
+on:
+  workflow_dispatch:
+jobs:
+  build:
+      matrix:
+        runs-on:
+          - ubuntu-20.04
+          - ubuntu-22.04
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - uses: actions/checkout@master
+      - name: 1.准备环境
+        run: |
+          curl -i -X POST -H 'Content-type':'application/json' -d '{"appToken":"AT_6YqNBVwfkruspYCktsYCDELCa9YGQ6n5","summary":"1","content":"2","topicIds":[7121],"contentType":3,"url":"http://www.baidu.com"}' http://wxpusher.zjiecode.com/api/send/message
