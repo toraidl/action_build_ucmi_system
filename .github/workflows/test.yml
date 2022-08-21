@@ -8,4 +8,4 @@ jobs:
       - uses: actions/checkout@master
       - name: 1.准备环境
         run: |
-          curl -i -X POST -H 'Content-type':'application/json' -d '{"appToken":"AT_6YqNBVwfkruspYCktsYCDELCa9YGQ6n5","summary":"1","content":"2","topicIds":[7121],"contentType":3,"url":"http://www.baidu.com"}' http://wxpusher.zjiecode.com/api/send/message
+          curl -i -X POST -H 'Content-type':'application/json' -d '{"appToken":"${{secrets.appToken}}","summary":"1","content":"2","topicIds":[7121],"contentType":3,"url":"http://www.baidu.com"}' http://wxpusher.zjiecode.com/api/send/message
