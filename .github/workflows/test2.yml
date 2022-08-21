@@ -17,7 +17,7 @@ jobs:
           API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
         with:
           source_file: 'romdata/UMI.ini'
-          destination_repo: 'zjw2017/ucmi-page'
+          destination_repo: 'zjw2017/sm8250-page'
           destination_folder: 'device'
           user_email: 'example@email.com'
           user_name: 'zjw2017'
