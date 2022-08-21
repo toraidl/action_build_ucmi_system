@@ -2,7 +2,7 @@ name: build_ucmi_system_123panpush_fuse
 on:
   workflow_dispatch:
     inputs:
-      URL:
+      URL: https://bigota.d.miui.com/V13.1.22.8.16.DEV/miui_VENUS_V13.1.22.8.16.DEV_3188ff2d9e_12.0.zip
         description: "待操作的系统包下载地址"
         required: true
 jobs:
