@@ -8,6 +8,7 @@ jobs:
       - uses: actions/checkout@master
       - name: 1.准备环境
         run: |
+          mkdir "$GITHUB_WORKSPACE"/romdata/
           touch "$GITHUB_WORKSPACE"/romdata/UMI.ini
           echo UMIPKG=11111 >> "$GITHUB_WORKSPACE"/romdata/UMI.ini
           echo UMIMD5=22222 >> "$GITHUB_WORKSPACE"/romdata/UMI.ini
