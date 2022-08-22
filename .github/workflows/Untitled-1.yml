@@ -9,9 +9,13 @@ jobs:
       - uses: actions/checkout@master
       - name: 1.准备环境
         run: |
+          echo "date=22.1.2" >> $GITHUB_ENV
+          md5=$(md5sum "$GITHUB_WORKSPACE"/tools/rclone.zip)
+          zipmd5=${md5:0:10}
+          md5=${md5:0:32}
+          echo "MD5=$md5" >> $GITHUB_ENV
           echo "device=cmi" >> $GITHUB_ENV
-          echo "NEW_PACKAGE_NAME=miui_CMIPRE_22.7.19_c47f96254e_12.0.zip" >> $GITHUB_ENV
-          echo "MD5=123456" >> $GITHUB_ENV
+          echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
       - name: 2.测试
         run: |
           mkdir "$GITHUB_WORKSPACE"/romdata && touch "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
