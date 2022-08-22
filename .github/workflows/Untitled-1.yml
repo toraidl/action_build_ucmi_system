@@ -1,4 +1,4 @@
-name: build_ucmi_system_123panpush_fuse - WxPusher
+name: test
 on:
   workflow_dispatch:
 
