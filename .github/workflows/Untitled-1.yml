@@ -1,0 +1,26 @@
+name: build_ucmi_system_123panpush_fuse - WxPusher
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@master
+      - name: 1.准备环境
+        run: |
+          echo "device=cmi" >> $GITHUB_ENV
+          echo "NEW_PACKAGE_NAME=miui_CMIPRE_22.7.19_c47f96254e_12.0.zip" >> $GITHUB_ENV
+          echo "MD5=123456" >> $GITHUB_ENV
+      - name: 2.测试
+        run: |
+          echo ${{ env.device }}PKG=${{env.NEW_PACKAGE_NAME}} 
+          echo ${{ env.device }}MD5=${{env.MD5}}
+          echo ${{ env.device }}TIME=\"$(TZ=':Asia/Shanghai' date '+%Y.%m.%d %H:%M')\"
+      - name: 10.删除工作流运行
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 0
+          keep_minimum_runs: 0
