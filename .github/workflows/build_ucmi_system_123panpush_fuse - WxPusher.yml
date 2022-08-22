@@ -257,7 +257,6 @@ jobs:
           else
               curl -i -X POST -H 'Content-type':'application/json' -d '{"appToken":"${{secrets.appToken}}","summary":"小米10Pro ${{env.date}}已构建完成","content":" **小米10Pro ${{env.date}}已构成完成** \n \n **包名：${{env.NEW_PACKAGE_NAME}}** \n \n **MD5：${{env.MD5}}** \n \n 下载地址为：[https://www.123pan.com/s/jKv8Vv-ueDWd](https://www.123pan.com/s/jKv8Vv-ueDWd) ","topicIds":[7122],"contentType":3}' http://wxpusher.zjiecode.com/api/send/message || true
           fi
-
       - name: 9.导出信息
         uses: dmnemec/copy_file_to_another_repo_action@main
         env:
@@ -269,7 +268,6 @@ jobs:
           user_email: 'example@email.com'
           user_name: 'zjw2017'
           commit_message: 'Update from $GITHUB_REF'
-
       - name: 10.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
         with:
