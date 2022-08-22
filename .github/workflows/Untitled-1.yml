@@ -10,20 +10,22 @@ jobs:
       - name: 1.准备环境
         run: |
           echo "date=22.1.2" >> $GITHUB_ENV
+      - name: 2.准备环境
+        run: |    
           md5=$(md5sum "$GITHUB_WORKSPACE"/tools/rclone.zip)
           zipmd5=${md5:0:10}
           md5=${md5:0:32}
           echo "MD5=$md5" >> $GITHUB_ENV
           echo "device=cmi" >> $GITHUB_ENV
           echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
-      - name: 2.测试
+      - name: 3.测试
         run: |
           mkdir "$GITHUB_WORKSPACE"/romdata && touch "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
           echo ${{ env.device }}PKG=${{env.NEW_PACKAGE_NAME}} >> "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
           echo ${{ env.device }}MD5=${{env.MD5}} >> "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
           echo ${{ env.device }}TIME=\"$(TZ=':Asia/Shanghai' date '+%Y.%m.%d %H:%M')\" >> "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
           cat "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
-      - name: 10.删除工作流运行
+      - name: 4.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
         with:
           token: ${{ github.token }}
