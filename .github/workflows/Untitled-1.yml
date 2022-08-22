@@ -14,9 +14,11 @@ jobs:
           echo "MD5=123456" >> $GITHUB_ENV
       - name: 2.测试
         run: |
-          echo ${{ env.device }}PKG=${{env.NEW_PACKAGE_NAME}} 
-          echo ${{ env.device }}MD5=${{env.MD5}}
-          echo ${{ env.device }}TIME=\"$(TZ=':Asia/Shanghai' date '+%Y.%m.%d %H:%M')\"
+          mkdir "$GITHUB_WORKSPACE"/romdata && touch "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
+          echo ${{ env.device }}PKG=${{env.NEW_PACKAGE_NAME}} >> "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
+          echo ${{ env.device }}MD5=${{env.MD5}} >> "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
+          echo ${{ env.device }}TIME=\"$(TZ=':Asia/Shanghai' date '+%Y.%m.%d %H:%M')\" >> "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
+          cat "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
       - name: 10.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
         with:
