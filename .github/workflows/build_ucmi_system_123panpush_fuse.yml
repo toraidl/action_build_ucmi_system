@@ -46,9 +46,9 @@ jobs:
       - name: 2.发送开始构建通知
         run: |
           if [[ "${{ env.device }}" == "umi" ]]; then
-              curl -i -X POST -H 'Content-type':'application/json' -d '{"appToken":"${{secrets.appToken}}","summary":"小米10 ${{env.date}}开始构建","content":" **小米10 ${{env.date}}开始构建** ","topicIds":[7121],"contentType":3}' http://wxpusher.zjiecode.com/api/send/message
+              curl -i -X POST -H 'Content-type':'application/json' -d '{"appToken":"${{secrets.appToken}}","summary":"小米10 ${{env.date}}开始构建","content":" **小米10 ${{env.date}}开始构建** ","topicIds":[7121],"contentType":3}' http://wxpusher.zjiecode.com/api/send/message || true
           else
-              curl -i -X POST -H 'Content-type':'application/json' -d '{"appToken":"${{secrets.appToken}}","summary":"小米10Pro ${{env.date}}开始构建","content":" **小米10Pro ${{env.date}}开始构建** ","topicIds":[7122],"contentType":3}' http://wxpusher.zjiecode.com/api/send/message
+              curl -i -X POST -H 'Content-type':'application/json' -d '{"appToken":"${{secrets.appToken}}","summary":"小米10Pro ${{env.date}}开始构建","content":" **小米10Pro ${{env.date}}开始构建** ","topicIds":[7122],"contentType":3}' http://wxpusher.zjiecode.com/api/send/message || true
           fi
       - name: 3.下载系统包
         run: |
