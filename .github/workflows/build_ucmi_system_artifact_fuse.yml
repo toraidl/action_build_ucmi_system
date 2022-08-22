@@ -165,6 +165,8 @@ jobs:
         with:
           name: ${{ env.NEW_PACKAGE_NAME }}
           path: "./zip/*"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: 7.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
         with:
