@@ -169,8 +169,7 @@ jobs:
       - name: 6.上传到Artifact
         uses: JasonEtco/upload-to-release@master
         with:
-          name: ${{ env.NEW_PACKAGE_NAME }}
-          path: "./zip/*"
+          args: ${{ env.NEW_PACKAGE_NAME }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: 7.删除工作流运行
