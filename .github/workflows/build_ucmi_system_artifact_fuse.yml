@@ -161,7 +161,7 @@ jobs:
               echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0" >> $GITHUB_ENV
           fi
       - name: 6.上传到Artifact
-        uses: actions/upload-artifact@v3
+        uses: JasonEtco/upload-to-release@master
         with:
           name: ${{ env.NEW_PACKAGE_NAME }}
           path: "./zip/*"
