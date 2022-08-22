@@ -89,6 +89,12 @@ jobs:
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/device_features/*
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/overlay/DeviceAndroidConfig.apk
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/overlay/DeviceConfig.apk
+          sudo rm -rf "$GITHUB_WORKSPACE"/images/product/data-app/*
+          sudo rm -rf "$GITHUB_WORKSPACE"/images/system/data-app/MiDrive
+          sudo rm -rf "$GITHUB_WORKSPACE"/images/system/data-app/MiShop
+          sudo rm -rf "$GITHUB_WORKSPACE"/images/system/data-app/MIMediaEditor
+          sudo rm -rf "$GITHUB_WORKSPACE"/images/system/data-app/MIUIDuokanReader
+          sudo rm -rf "$GITHUB_WORKSPACE"/images/system/data-app/MIUIYoupin
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/AospFrameworkResOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/DevicesAndroidOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/DevicesOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay
