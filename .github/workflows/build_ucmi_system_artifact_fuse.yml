@@ -166,12 +166,16 @@ jobs:
               mv "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
               echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0" >> $GITHUB_ENV
           fi
-      - name: 6.上传到Artifact
-        uses: JasonEtco/upload-to-release@master
+          touch file.log
+          echo "$NEW_PACKAGE_NAME" > file.log
+      - name: Upload ROM to GH-Release
+        uses: ncipollo/release-action@v1.8.6
         with:
-          args: ${{ env.NEW_PACKAGE_NAME }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          artifacts: ${{ github.workspace }}/zip/*
+          name: "test"
+          tag: "test"
+          bodyFile: "${{ github.workspace }}/file.log"
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: 7.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
         with:
