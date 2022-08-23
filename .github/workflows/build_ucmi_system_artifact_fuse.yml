@@ -152,15 +152,11 @@ jobs:
           sed -i "s/system_size/$system_size/g" "$GITHUB_WORKSPACE"/images/dynamic_partitions_op_list
           sed -i "s/system_ext_size/$system_ext_size/g" "$GITHUB_WORKSPACE"/images/dynamic_partitions_op_list
           if [[ "${{ env.device }}" == "umi" ]]; then
-              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
+              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/* -v1536m
               sudo rm -rf "$GITHUB_WORKSPACE"/images
-              echo "NEW_PACKAGE_NAME=miui_UMIPRE_${{ env.date }}" >> $GITHUB_ENV
-              split -b 1536M -d "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_12.0.zip
           else
-              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
+              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/* -v1536m
               sudo rm -rf "$GITHUB_WORKSPACE"/images
-              echo "NEW_PACKAGE_NAME=miui_CMIPRE_${{ env.date }}" >> $GITHUB_ENV
-              split -b 1536M -d "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_12.0.zip
           fi
           touch file.log
           echo "$NEW_PACKAGE_NAME" > file.log
