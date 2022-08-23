@@ -90,15 +90,11 @@ jobs:
           do
               "$GITHUB_WORKSPACE"/tools/payload-dumper-go -p $i "$GITHUB_WORKSPACE"/PSYCHE/payload.bin
               mv "$GITHUB_WORKSPACE"/payload/$i.img "$GITHUB_WORKSPACE"/images/$i.img
+              sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/$i.img "$GITHUB_WORKSPACE"/images
+              rm -rf "$GITHUB_WORKSPACE"/images/$i.img
           done
           rm -rf "$GITHUB_WORKSPACE"/payload
           rm -rf "$GITHUB_WORKSPACE"/PSYCHE
-          sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/product.img "$GITHUB_WORKSPACE"/images
-          sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/system_ext.img "$GITHUB_WORKSPACE"/images
-          sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/system.img "$GITHUB_WORKSPACE"/images
-          rm -rf "$GITHUB_WORKSPACE"/images/product.img
-          rm -rf "$GITHUB_WORKSPACE"/images/system_ext.img
-          rm -rf "$GITHUB_WORKSPACE"/images/system.img
       - name: 5.替换相关文件
         run: |
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/device_features/*
