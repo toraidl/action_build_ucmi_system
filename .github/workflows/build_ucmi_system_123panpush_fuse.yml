@@ -47,8 +47,10 @@ jobs:
         run: |
           if [[ "${{ env.device }}" == "umi" ]]; then
               curl -i -X POST -H 'Content-type':'application/json' -d '{"appToken":"${{secrets.appToken}}","summary":"小米10 ${{env.date}}开始构建","content":" **小米10 ${{env.date}}开始构建** ","topicIds":[7121],"contentType":3}' http://wxpusher.zjiecode.com/api/send/message || true
+              curl -i -X POST -H 'Content-type':'application/json' -d '{"token":"${{secrets.appToken2}}","title":"小米10 ${{env.date}}开始构建","content":" **小米10 ${{env.date}}开始构建** ","topic":"umi","template":"markdown"}' http://www.pushplus.plus/send || true
           else
               curl -i -X POST -H 'Content-type':'application/json' -d '{"appToken":"${{secrets.appToken}}","summary":"小米10Pro ${{env.date}}开始构建","content":" **小米10Pro ${{env.date}}开始构建** ","topicIds":[7122],"contentType":3}' http://wxpusher.zjiecode.com/api/send/message || true
+              curl -i -X POST -H 'Content-type':'application/json' -d '{"token":"${{secrets.appToken2}}","title":"小米10Pro ${{env.date}}开始构建","content":" **小米10Pro ${{env.date}}开始构建** ","topic":"umi","template":"markdown"}' http://www.pushplus.plus/send || true
           fi
       - name: 3.下载系统包
         run: |
@@ -249,8 +251,10 @@ jobs:
         run: |
           if [[ "${{ env.device }}" == "umi" ]]; then
               curl -i -X POST -H 'Content-type':'application/json' -d '{"appToken":"${{secrets.appToken}}","summary":"小米10 ${{env.date}}已构建完成","content":" **小米10 ${{env.date}}已构建完成** \n \n **包名：${{env.NEW_PACKAGE_NAME}}** \n \n **MD5：${{env.MD5}}** \n \n 下载地址为：[https://www.123pan.com/s/jKv8Vv-SiDWd](https://www.123pan.com/s/jKv8Vv-SiDWd) ","topicIds":[7121],"contentType":3}' http://wxpusher.zjiecode.com/api/send/message || true
+              curl -i -X POST -H 'Content-type':'application/json' -d '{"token":"${{secrets.appToken2}}","title":"小米10 ${{env.date}}已构建完成","content":" **小米10 ${{env.date}}已构建完成** \n \n **包名：${{env.NEW_PACKAGE_NAME}}** \n \n **MD5：${{env.MD5}}** \n \n **下载地址为：[https://www.123pan.com/s/jKv8Vv-SiDWd](https://www.123pan.com/s/jKv8Vv-SiDWd)** ","topic":"umi","template":"markdown"}' http://www.pushplus.plus/send || true
           else
               curl -i -X POST -H 'Content-type':'application/json' -d '{"appToken":"${{secrets.appToken}}","summary":"小米10Pro ${{env.date}}已构建完成","content":" **小米10Pro ${{env.date}}已构建完成** \n \n **包名：${{env.NEW_PACKAGE_NAME}}** \n \n **MD5：${{env.MD5}}** \n \n 下载地址为：[https://www.123pan.com/s/jKv8Vv-liDWd](https://www.123pan.com/s/jKv8Vv-liDWd) ","topicIds":[7122],"contentType":3}' http://wxpusher.zjiecode.com/api/send/message || true
+              curl -i -X POST -H 'Content-type':'application/json' -d '{"token":"${{secrets.appToken2}}","title":"小米10Pro ${{env.date}}已构建完成","content":" **小米10Pro ${{env.date}}已构建完成** \n \n **包名：${{env.NEW_PACKAGE_NAME}}** \n \n **MD5：${{env.MD5}}** \n \n **下载地址为：[https://www.123pan.com/s/jKv8Vv-SiDWd](https://www.123pan.com/s/jKv8Vv-SiDWd)** ","topic":"umi","template":"markdown"}' http://www.pushplus.plus/send || true
           fi
           mkdir "$GITHUB_WORKSPACE"/romdata && touch "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
           echo ${{ env.device }}PKG=NEW_PACKAGE_NAME >> "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
