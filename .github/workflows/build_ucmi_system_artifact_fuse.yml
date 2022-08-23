@@ -95,6 +95,8 @@ jobs:
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system/data-app/MIMediaEditor
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system/data-app/MIUIDuokanReader
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system/data-app/MIUIYoupin
+          LINE=$(sudo cat -n build.prop |grep 'ro.sf.lcd_density' | awk '{print $1}')
+          sudo sed -i ''$LINE'c ro.sf.lcd_density=440' build.prop
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/AospFrameworkResOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/DevicesAndroidOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/DevicesOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay
@@ -158,13 +160,15 @@ jobs:
               zipmd5=${md5:0:10}
               mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
               echo "NEW_PACKAGE_NAME=miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0" >> $GITHUB_ENV
+              split -b 1536M -d "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
           else
-              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/* -v1536m
+              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
               sudo rm -rf "$GITHUB_WORKSPACE"/images
               md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip)
               zipmd5=${md5:0:10}
               mv "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
               echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0" >> $GITHUB_ENV
+              split -b 1536M -d "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
           fi
           touch file.log
           echo "$NEW_PACKAGE_NAME" > file.log
