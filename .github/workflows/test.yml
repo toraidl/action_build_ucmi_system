@@ -8,12 +8,18 @@ jobs:
       - uses: actions/checkout@master
       - name: 1.准备环境
         run: |
+          mkdir -p "$GITHUB_WORKSPACE"/zip
+          cd zip
           touch test.a
+          echo "test go" > test.a
+          touch readme.b
+          echo "this is a test" > readme.b
+          cd ..
       - name: Upload SGSI to GH-Release
         uses: ncipollo/release-action@v1.8.6
         with:
-          artifacts: test.a
+          artifacts: "{GITHUB_WORKSPACE}/zip/test.a"
           name: "test"
           tag: "test"
-          bodyFile: ""
+          bodyFile: "{GITHUB_WORKSPACE}/zip/readme.b"
           token: ${{ secrets.GITHUB_TOKEN }}
