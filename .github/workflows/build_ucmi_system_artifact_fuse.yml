@@ -176,8 +176,8 @@ jobs:
         uses: ncipollo/release-action@v1.8.6
         with:
           artifacts: ${{ github.workspace }}/zip/*
-          name: "test"
-          tag: "test"
+          name: "${{ env.device }}"
+          tag: "${{ env.device }}"
           bodyFile: "${{ github.workspace }}/file.log"
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: 7.删除工作流运行
