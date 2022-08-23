@@ -15,5 +15,5 @@ jobs:
           artifacts: test.a
           name: "test"
           tag: "test"
-          bodyFile: "test"
+          bodyFile: ""
           token: ${{ secrets.GITHUB_TOKEN }}
