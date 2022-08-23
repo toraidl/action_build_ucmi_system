@@ -95,8 +95,10 @@ jobs:
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system/data-app/MIMediaEditor
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system/data-app/MIUIDuokanReader
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system/data-app/MIUIYoupin
-          LINE=$(sudo cat -n "$GITHUB_WORKSPACE"/images/system/build.prop |grep 'ro.sf.lcd_density' | awk '{print $1}')
-          sudo sed -i ''$LINE'c ro.sf.lcd_density=440' "$GITHUB_WORKSPACE"/images/system/build.prop
+          sudo cd images/system/
+          LINE=$(sudo cat -n build.prop |grep 'ro.sf.lcd_density' | awk '{print $1}')
+          sudo sed -i ''$LINE'c ro.sf.lcd_density=440' build.prop
+          cd ../..
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/AospFrameworkResOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/DevicesAndroidOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/DevicesOverlay.apk "$GITHUB_WORKSPACE"/images/product/overlay
