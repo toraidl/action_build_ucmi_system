@@ -12,7 +12,7 @@ jobs:
       - name: Upload SGSI to GH-Release
         uses: ncipollo/release-action@v1.8.6
         with:
-          artifacts: test.a
+          artifacts: ${{ github.workspace }}/test.a
           name: "test"
           tag: "test"
           bodyFile: "test"
