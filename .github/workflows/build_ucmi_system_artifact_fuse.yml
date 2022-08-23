@@ -95,7 +95,7 @@ jobs:
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system/data-app/MIMediaEditor
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system/data-app/MIUIDuokanReader
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system/data-app/MIUIYoupin
-          sudo cp -f "$GITHUB_WORKSPACE"/images/system/build.prop ./
+          sudo cp -f "${{ github.workspace }}"/images/system/build.prop ./
           LINE=$(sudo cat -n build.prop |grep 'ro.sf.lcd_density' | awk '{print $1}')
           sudo sed -i ''$LINE'c ro.sf.lcd_density=440' build.prop
           sudo cp -f ./build.prop "$GITHUB_WORKSPACE"/images/system/
