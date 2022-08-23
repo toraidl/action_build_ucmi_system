@@ -4,7 +4,7 @@ tmp_dir=$(mktemp -d 2>/dev/null || mktemp -d -t 'rclone-install.XXXXXXXXXX')
 cd "$tmp_dir"
 set -e
 #curl -OfsS https://downloads.rclone.org/rclone-current-linux-amd64.zip
-unzip -a ./tools/rclone-current-linux-amd64.zip -d tmp_unzip_dir_for_rclone
+unzip -a rclone-current-linux-amd64.zip -d tmp_unzip_dir_for_rclone
 cd tmp_unzip_dir_for_rclone/*
 cp rclone /usr/bin/rclone.new
 chmod 755 /usr/bin/rclone.new
