@@ -18,8 +18,8 @@ jobs:
       - name: Upload SGSI to GH-Release
         uses: ncipollo/release-action@v1.8.6
         with:
-          artifacts: "{GITHUB_WORKSPACE}/zip/test.a"
+          artifacts: ${{ github.workspace }}/zip/test.a
           name: "test"
           tag: "test"
-          bodyFile: "{GITHUB_WORKSPACE}/zip/readme.b"
+          bodyFile: "${{ github.workspace }}/zip/readme.b"
           token: ${{ secrets.GITHUB_TOKEN }}
