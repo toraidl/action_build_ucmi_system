@@ -8,11 +8,11 @@ jobs:
       - uses: actions/checkout@master
       - name: 1.准备环境
         run: |
-          touch ${{ github.workspace }}/test.a
+          touch test.a
       - name: Upload SGSI to GH-Release
         uses: ncipollo/release-action@v1.8.6
         with:
-          artifacts: ${{ github.workspace }}/test.a
+          artifacts: test.a
           name: "test"
           tag: "test"
           bodyFile: "test"
