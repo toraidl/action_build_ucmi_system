@@ -239,8 +239,8 @@ jobs:
               NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
           fi
           mkdir "$GITHUB_WORKSPACE"/romdata && touch "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
-          echo ${{ env.device }}PKG=${{env.NEW_PACKAGE_NAME}} >> "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
-          echo ${{ env.device }}MD5=${{env.MD5}} >> "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
+          echo ${{ env.device }}PKG=NEW_PACKAGE_NAME >> "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
+          echo ${{ env.device }}MD5=MD5 >> "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
           echo ${{ env.device }}TIME=\"$(TZ=':Asia/Shanghai' date '+%Y.%m.%d %H:%M')\" >> "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
       - name: 7.上传到123盘
         run: |
