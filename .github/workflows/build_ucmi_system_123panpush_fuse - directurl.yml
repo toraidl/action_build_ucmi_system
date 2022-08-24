@@ -241,11 +241,11 @@ jobs:
           if [[ "${{ env.device }}" == "umi" ]]; then
               rclone mkdir 123pan:/UMI_Packages
               rclone sync -P ./zip/* 123pan:/UMI_Packages
-              echo 下载链接为：http://alist.zjw.js.cn/d/123pan/UMI_Packages/${{env.NEW_PACKAGE_NAME}}
+              echo ${{ env.device }}URL=http://alist.zjw.js.cn/d/123pan/UMI_Packages/${{env.NEW_PACKAGE_NAME}} >> "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
           else
               rclone mkdir 123pan:/CMI_Packages
               rclone sync -P ./zip/* 123pan:/CMI_Packages
-              echo 下载链接为：http://alist.zjw.js.cn/d/123pan/CMI_Packages/${{env.NEW_PACKAGE_NAME}}
+              echo ${{ env.device }}URL=http://alist.zjw.js.cn/d/123pan/CMI_Packages/${{env.NEW_PACKAGE_NAME}} >> "$GITHUB_WORKSPACE"/romdata/${{ env.device }}.ini
           fi
       - name: 8.发送打包成功通知
         run: |
