@@ -240,15 +240,11 @@ jobs:
         run: |
           if [[ "${{ env.device }}" == "umi" ]]; then
               rclone mkdir 123pan:/UMI_Packages
-              until [ $(rclone sync -P ./zip/* 123pan:/UMI_Packages) = 0 ]; do
-                    echo 正在重新上传123盘
-              done
+              rclone sync -P ./zip/* 123pan:/UMI_Packages
               echo 下载链接为：http://alist.zjw.js.cn/d/123pan/UMI_Packages/${{env.NEW_PACKAGE_NAME}}
           else
               rclone mkdir 123pan:/CMI_Packages
-              until [ $(rclone sync -P ./zip/* 123pan:/CMI_Packages) = 0 ]; do
-                    echo 正在重新上传123盘
-              done
+              rclone sync -P ./zip/* 123pan:/CMI_Packages
               echo 下载链接为：http://alist.zjw.js.cn/d/123pan/CMI_Packages/${{env.NEW_PACKAGE_NAME}}
           fi
       - name: 8.发送打包成功通知
