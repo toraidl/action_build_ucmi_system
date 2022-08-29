@@ -112,11 +112,7 @@ jobs:
           sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/vbmeta.img "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update
           sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/vbmeta_system.img "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update "$GITHUB_WORKSPACE"/images
-          if [[ "${{ env.device }}" == "umi" ]]; then
-              sudo tar -zxvf "$GITHUB_WORKSPACE"/umi_files/boot.tar.gz -C "$GITHUB_WORKSPACE"/images
-          else
-              sudo tar -zxvf "$GITHUB_WORKSPACE"/cmi_files/boot.tar.gz -C "$GITHUB_WORKSPACE"/images
-          fi
+          sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot.tar.gz -C "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}_files/META-INF "$GITHUB_WORKSPACE"/images
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/dynamic_partitions_op_list "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}/* "$GITHUB_WORKSPACE"/images
