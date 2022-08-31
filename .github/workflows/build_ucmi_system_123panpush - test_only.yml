@@ -237,18 +237,7 @@ jobs:
           else
               curl -i -X POST -H 'Content-type':'application/json' -d '{"token":"${{ secrets.appToken2 }}","title":"小米10Pro ${{ env.date }}已构建完成","content":" **小米10Pro ${{ env.date }}已构建完成** \n \n **包名：${{ env.NEW_PACKAGE_NAME }}** \n \n **MD5：${{ env.MD5 }}** \n \n **下载地址为：[https://alist.zjw.js.cn/d/123pan/RubbishBin/${{ env.NEW_PACKAGE_NAME }}](https://alist.zjw.js.cn/d/123pan/RubbishBin/${{ env.NEW_PACKAGE_NAME }})** ","topic":"cmi","template":"markdown"}' http://www.pushplus.plus/send || true
           fi
-      - name: 9.导出信息
-        uses: dmnemec/copy_file_to_another_repo_action@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-        with:
-          source_file: 'romdata/${{ env.device }}.ini'
-          destination_repo: 'zjw2017/sm8250-page'
-          destination_folder: 'device'
-          user_email: 'example@email.com'
-          user_name: 'zjw2017'
-          commit_message: 'Update from $GITHUB_REF'
-      - name: 10.删除工作流运行
+      - name: 9.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
         with:
           token: ${{ github.token }}
