@@ -107,8 +107,8 @@ jobs:
           sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/vbmeta.img "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update
           sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/vbmeta_system.img "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update "$GITHUB_WORKSPACE"/images
-          sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot_official.tar.gz -C "$GITHUB_WORKSPACE"/images
-          sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot_magisk.tar.gz -C "$GITHUB_WORKSPACE"/images
+          sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot_official.tar.gz -C "$GITHUB_WORKSPACE"/images || true
+          sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot_magisk.tar.gz -C "$GITHUB_WORKSPACE"/images || true
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}_files/META-INF "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}/* "$GITHUB_WORKSPACE"/images
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}
