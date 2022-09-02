@@ -26,7 +26,7 @@ jobs:
               echo "device=umi" >> $GITHUB_ENV
               echo "ORIGN_ZIP_NAME=miui_UMI_V13.0.7.0.SJBCNXM_1beabe6d7f_12.0.zip" >> $GITHUB_ENV
           fi
-          sudo apt install python3 python3-pip aria2 zip p7zip-full tar zipalign
+          sudo apt install python3 python3-pip aria2 zip p7zip-full tar zipalign zstd
           sudo apt --fix-broken install
           sudo apt update --fix-missing
           pip3 install --upgrade pip
@@ -74,22 +74,20 @@ jobs:
           7z x "$GITHUB_WORKSPACE"/$ZIP_NAME_PSYCHE -r -o"$GITHUB_WORKSPACE"/PSYCHE
           rm -rf "$GITHUB_WORKSPACE"/$ZIP_NAME_PSYCHE
           7z x "$GITHUB_WORKSPACE"/${{ env.ORIGN_ZIP_NAME }} -r -o"$GITHUB_WORKSPACE"/${{ env.device }} firmware-update
-          for i in odm vendor
-          do
+          for i in odm vendor; do
               7z x "$GITHUB_WORKSPACE"/${{ env.ORIGN_ZIP_NAME }} -o"$GITHUB_WORKSPACE"/${{ env.device }} $i.transfer.list
               7z x "$GITHUB_WORKSPACE"/${{ env.ORIGN_ZIP_NAME }} -o"$GITHUB_WORKSPACE"/${{ env.device }} $i.patch.dat
               7z x "$GITHUB_WORKSPACE"/${{ env.ORIGN_ZIP_NAME }} -o"$GITHUB_WORKSPACE"/${{ env.device }} $i.new.dat.br
+              "$GITHUB_WORKSPACE"/tools/brotli -d "$GITHUB_WORKSPACE"/${{ env.device }}/$i.new.dat.br
+              rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/$i.new.dat.br
+              python3 "$GITHUB_WORKSPACE"/tools/sdat2img.py "$GITHUB_WORKSPACE"/${{ env.device }}/$i.transfer.list "$GITHUB_WORKSPACE"/${{ env.device }}/$i.new.dat "$GITHUB_WORKSPACE"/${{ env.device }}/$i.img
+              rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/$i.patch.dat
+              rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/$i.transfer.list
+              rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/$i.new.dat
           done
-          "$GITHUB_WORKSPACE"/tools/brotli -d "$GITHUB_WORKSPACE"/${{ env.device }}/vendor.new.dat.br
-          rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor.new.dat.br
-          python3 "$GITHUB_WORKSPACE"/tools/sdat2img.py "$GITHUB_WORKSPACE"/${{ env.device }}/vendor.transfer.list "$GITHUB_WORKSPACE"/${{ env.device }}/vendor.new.dat "$GITHUB_WORKSPACE"/${{ env.device }}/vendor.img
-          rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor.patch.dat
-          rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor.transfer.list
-          rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor.new.dat
           sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/${{ env.device }}/vendor.img "$GITHUB_WORKSPACE"/${{ env.device }}
           rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor.img
-          for i in system product system_ext
-          do
+          for i in system product system_ext; do
               "$GITHUB_WORKSPACE"/tools/payload-dumper-go -p $i "$GITHUB_WORKSPACE"/PSYCHE/payload.bin
               mv "$GITHUB_WORKSPACE"/payload/$i.img "$GITHUB_WORKSPACE"/images/$i.img
               sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/$i.img "$GITHUB_WORKSPACE"/images
@@ -111,10 +109,12 @@ jobs:
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor/bin/install-recovery.sh
           sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/vbmeta.img "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update
           sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/vbmeta_system.img "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update
+          sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/FlashWindows.bat "$GITHUB_WORKSPACE"/images
+          sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}_files/bin "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update "$GITHUB_WORKSPACE"/images
-          sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot.tar.gz -C "$GITHUB_WORKSPACE"/images
+          sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot_official.tar.gz -C "$GITHUB_WORKSPACE"/images || true
+          sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot_magisk.tar.gz -C "$GITHUB_WORKSPACE"/images || true
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}_files/META-INF "$GITHUB_WORKSPACE"/images
-          sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/dynamic_partitions_op_list "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}/* "$GITHUB_WORKSPACE"/images
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system/system/app/Updater
@@ -176,12 +176,14 @@ jobs:
           fi
           # 声音动效动画 By PedroZ
           sudo unzip -o -q "$GITHUB_WORKSPACE"/${{ env.device }}_files/etc.zip -d "$GITHUB_WORKSPACE"/images/system/system/etc/audio/
+          rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}_files
       - name: 6.打包
         run: |
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/mke2fs
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/e2fsdroid
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/img2simg
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/brotli
+          sudo chmod 777 "$GITHUB_WORKSPACE"/tools/lpmake
           product_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/product | awk {'print $1'})
           product_size=$(echo "$product_size + 20971520" | bc)
           product_size=$(echo "$product_size / 4096" | bc)
@@ -194,8 +196,7 @@ jobs:
           system_size=$(sudo du -sb "$GITHUB_WORKSPACE"/images/system | awk {'print $1'})
           system_size=$(echo "$system_size + 104857600" | bc)
           system_size=$(echo "$system_size / 4096" | bc)
-          for i in product vendor system_ext system
-          do
+          for i in product vendor system_ext system; do
               sudo python3 "$GITHUB_WORKSPACE"/tools/fspatch.py "$GITHUB_WORKSPACE"/images/$i "$GITHUB_WORKSPACE"/images/TI_config/"$i"_fs_config
               "$GITHUB_WORKSPACE"/tools/mke2fs -O ^has_journal -L $i -I 256 -M /$i -m 0 -t ext4 -b 4096 "$GITHUB_WORKSPACE"/images/$i.img $(eval echo "$"$i"_size")
               sudo "$GITHUB_WORKSPACE"/tools/e2fsdroid -e -T 1230768000 -C "$GITHUB_WORKSPACE"/images/TI_config/"$i"_fs_config -S "$GITHUB_WORKSPACE"/images/TI_config/"$i"_file_contexts -f "$GITHUB_WORKSPACE"/images/$i -a /$i "$GITHUB_WORKSPACE"/images/$i.img
@@ -204,37 +205,27 @@ jobs:
               sudo rm -rf "$GITHUB_WORKSPACE"/images/$i
           done
           sudo rm -rf "$GITHUB_WORKSPACE"/images/TI_config
-          for i in product system system_ext vendor
-          do
-              "$GITHUB_WORKSPACE"/tools/img2simg "$GITHUB_WORKSPACE"/images/$i.img "$GITHUB_WORKSPACE"/simages/$i.img
+          "$GITHUB_WORKSPACE"/tools/lpmake --metadata-size 65536 --super-name super --block-size=4096 --partition odm:readonly:134217728:qti_dynamic_partitions --image odm="$GITHUB_WORKSPACE"/images/odm.img --partition product:readonly:$product_size:qti_dynamic_partitions --image product="$GITHUB_WORKSPACE"/images/product.img --partition system:readonly:$system_size:qti_dynamic_partitions --image system="$GITHUB_WORKSPACE"/images/system.img --partition system_ext:readonly:$system_ext_size:qti_dynamic_partitions --image system_ext="$GITHUB_WORKSPACE"/images/system_ext.img --partition vendor:readonly:$vendor_size:qti_dynamic_partitions --image vendor="$GITHUB_WORKSPACE"/images/vendor.img --device super:9126805504 --metadata-slots 2 --group qti_dynamic_partitions:9126805504 -F --output "$GITHUB_WORKSPACE"/images/super.img
+          for i in product system system_ext vendor odm; do
               rm -rf "$GITHUB_WORKSPACE"/images/$i.img
-              python3 "$GITHUB_WORKSPACE"/tools/img2sdat.py "$GITHUB_WORKSPACE"/simages/$i.img -o "$GITHUB_WORKSPACE"/simages/ -v 4 -p $i
-              rm -rf "$GITHUB_WORKSPACE"/simages/$i.img
-              "$GITHUB_WORKSPACE"/tools/brotli -q 5 "$GITHUB_WORKSPACE"/simages/$i.new.dat -o "$GITHUB_WORKSPACE"/images/$i.new.dat.br
-              mv "$GITHUB_WORKSPACE"/simages/$i.transfer.list "$GITHUB_WORKSPACE"/simages/$i.patch.dat "$GITHUB_WORKSPACE"/images
-              rm -rf "$GITHUB_WORKSPACE"/simages/$i.new.dat
           done
-          rm -rf "$GITHUB_WORKSPACE"/simages
-          sed -i "s/product_size/$product_size/g" "$GITHUB_WORKSPACE"/images/dynamic_partitions_op_list
-          sed -i "s/vendor_size/$vendor_size/g" "$GITHUB_WORKSPACE"/images/dynamic_partitions_op_list
-          sed -i "s/system_size/$system_size/g" "$GITHUB_WORKSPACE"/images/dynamic_partitions_op_list
-          sed -i "s/system_ext_size/$system_ext_size/g" "$GITHUB_WORKSPACE"/images/dynamic_partitions_op_list
+          zstd "$GITHUB_WORKSPACE"/images/super.img -o "$GITHUB_WORKSPACE"/images/super.zst --rm
           if [[ "${{ env.device }}" == "umi" ]]; then
               sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
               sudo rm -rf "$GITHUB_WORKSPACE"/images
               md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip)
               echo "MD5=${md5:0:32}" >> $GITHUB_ENV
               zipmd5=${md5:0:10}
-              mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
-              echo "NEW_PACKAGE_NAME=miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
+              mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip
+              echo "NEW_PACKAGE_NAME=miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip" >> $GITHUB_ENV
           else
               sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
               sudo rm -rf "$GITHUB_WORKSPACE"/images
               md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip)
               echo "MD5=${md5:0:32}" >> $GITHUB_ENV
               zipmd5=${md5:0:10}
-              mv "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip
-              echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0.zip" >> $GITHUB_ENV
+              mv "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip
+              echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip" >> $GITHUB_ENV
           fi
       - name: 7.上传到123盘
         run: |
