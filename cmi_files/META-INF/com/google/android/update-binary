@@ -92,6 +92,7 @@ package_extract_file "firmware-update/xbl_config_5.elf" "/dev/block/bootdevice/b
 package_extract_file "firmware-update/cmnlib64.mbn" "/dev/block/bootdevice/by-name/cmnlib64"
 
 #super
+unzip -p "$ZIPFILE" "firmware-update/super_empty.img" >/dev/block/bootdevice/by-name/super
 package_extract_zstd "super.zst" "/dev/block/bootdevice/by-name/super"
 
 ui_print " "

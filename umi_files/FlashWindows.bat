@@ -102,7 +102,7 @@ bin\Windows\fastboot flash "xbl_4" "firmware-update/xbl_4.elf"
 bin\Windows\fastboot flash "xbl_5" "firmware-update/xbl_5.elf"
 bin\Windows\fastboot flash "xbl_config_4" "firmware-update/xbl_config_4.elf"
 bin\Windows\fastboot flash "xbl_config_5" "firmware-update/xbl_config_5.elf"
-
+if exist super_empty.img bin\Windows\fastboot flash super firmware-update/super_empty.img
 if exist super.img bin\Windows\fastboot flash super super.img
 echo.刷完super可能会卡一会，请耐心等待！！！
 

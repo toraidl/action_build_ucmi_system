@@ -112,6 +112,7 @@ jobs:
           sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/FlashWindows.bat "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}_files/bin "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update "$GITHUB_WORKSPACE"/images
+          sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/super_empty.img "$GITHUB_WORKSPACE"/images/firmware-update
           sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot_official.tar.gz -C "$GITHUB_WORKSPACE"/images
           sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot_magisk.tar.gz -C "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}_files/META-INF "$GITHUB_WORKSPACE"/images
