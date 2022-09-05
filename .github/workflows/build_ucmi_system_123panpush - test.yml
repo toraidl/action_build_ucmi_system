@@ -21,7 +21,7 @@ jobs:
           echo "date=$(echo ${{ github.event.inputs.URL }} | cut -d"/" -f4)" >> $GITHUB_ENV
           if [[ "$(cat /etc/issue | grep 22.04)" == "" ]]; then
               echo "device=cmi" >> $GITHUB_ENV
-              echo "ORIGN_ZIP_NAME=miui_CMIPRE_22.7.19_c47f96254e_12.0.zip" >> $GITHUB_ENV
+              echo "ORIGN_ZIP_NAME=miui_CMI_V13.0.5.0.SJACNXM_79609f2b93_12.0.zip" >> $GITHUB_ENV
           else
               echo "device=umi" >> $GITHUB_ENV
               echo "ORIGN_ZIP_NAME=miui_UMI_V13.0.7.0.SJBCNXM_1beabe6d7f_12.0.zip" >> $GITHUB_ENV
@@ -56,7 +56,7 @@ jobs:
           if [[ "${{ env.device }}" == "umi" ]]; then
               aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" https://hugeota.d.miui.com/V13.0.7.0.SJBCNXM/miui_UMI_V13.0.7.0.SJBCNXM_1beabe6d7f_12.0.zip
           else
-              aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" https://hugeota.d.miui.com/22.7.19/miui_CMIPRE_22.7.19_c47f96254e_12.0.zip
+              aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" https://hugeota.d.miui.com/V13.0.5.0.SJACNXM/miui_CMI_V13.0.5.0.SJACNXM_79609f2b93_12.0.zip
           fi
       - name: 4.解包
         run: |
@@ -112,8 +112,8 @@ jobs:
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}_files/bin "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update "$GITHUB_WORKSPACE"/images
           sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/super_empty.img "$GITHUB_WORKSPACE"/images/firmware-update
-          sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot_official.tar.gz -C "$GITHUB_WORKSPACE"/images
-          sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot_magisk.tar.gz -C "$GITHUB_WORKSPACE"/images
+          sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot_official2.tar.gz -C "$GITHUB_WORKSPACE"/images
+          sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot_magisk2.tar.gz -C "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}_files/META-INF "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}/* "$GITHUB_WORKSPACE"/images
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}
