@@ -95,6 +95,7 @@ jobs:
           done
           rm -rf "$GITHUB_WORKSPACE"/payload
           rm -rf "$GITHUB_WORKSPACE"/PSYCHE
+          rm -rf "$GITHUB_WORKSPACE"/${{ env.ORIGN_ZIP_NAME }}
       - name: 5.替换相关文件
         run: |
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/device_features/*
