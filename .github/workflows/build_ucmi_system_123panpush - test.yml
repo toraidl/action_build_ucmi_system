@@ -56,7 +56,7 @@ jobs:
           if [[ "${{ env.device }}" == "umi" ]]; then
               aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" https://hugeota.d.miui.com/V13.0.7.0.SJBCNXM/miui_UMI_V13.0.7.0.SJBCNXM_1beabe6d7f_12.0.zip
           else
-              aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" https://hugeota.d.miui.com/V13.0.5.0.SJACNXM/miui_CMI_V13.0.5.0.SJACNXM_79609f2b93_12.0.zip
+              aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" https://bigota.d.miui.com/V13.0.5.0.SJACNXM/miui_CMI_V13.0.5.0.SJACNXM_79609f2b93_12.0.zip
           fi
       - name: 4.解包
         run: |
