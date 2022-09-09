@@ -110,13 +110,11 @@ jobs:
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor/bin/install-recovery.sh
           sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/vbmeta.img "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update
           sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/vbmeta_system.img "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update
-          sudo mv -f "$GITHUB_WORKSPACE"/tools/FlashWindows.bat "$GITHUB_WORKSPACE"/images
-          sudo cp -r "$GITHUB_WORKSPACE"/tools/bin "$GITHUB_WORKSPACE"/images
+          sudo unzip -o "$GITHUB_WORKSPACE"/tools/flashtools.zip -d "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update "$GITHUB_WORKSPACE"/images
           sudo mv -f "$GITHUB_WORKSPACE"/tools/super_empty.img "$GITHUB_WORKSPACE"/images/firmware-update
           sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot_official.tar.gz -C "$GITHUB_WORKSPACE"/images
           sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot_magisk.tar.gz -C "$GITHUB_WORKSPACE"/images
-          sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}_files/META-INF "$GITHUB_WORKSPACE"/images
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}/* "$GITHUB_WORKSPACE"/images
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}
           sudo rm -rf "$GITHUB_WORKSPACE"/images/system/system/app/Updater
