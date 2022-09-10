@@ -222,7 +222,7 @@ jobs:
         with:
           artifacts: ${{ github.workspace }}/zip/*
           name: "${{ env.device }}"
-          tag: "${{ env.device }}"
+          tag: "${{ env.date }}"
           bodyFile: "${{ env.NEW_PACKAGE_NAME }}"
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: 7.删除工作流运行
