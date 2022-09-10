@@ -102,7 +102,7 @@ jobs:
           sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/vbmeta.img "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update
           sudo mv -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/vbmeta_system.img "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update
           sudo unzip -o "$GITHUB_WORKSPACE"/tools/flashtools.zip -d "$GITHUB_WORKSPACE"/images
-          sudo mv -f "$GITHUB_WORKSPACE"/tools/update-binary-for-github-release "$GITHUB_WORKSPACE"/images/MTEA-INF/com/google/android/update-binary
+          sudo mv -f "$GITHUB_WORKSPACE"/tools/update-binary-for-github-release "$GITHUB_WORKSPACE"/images/META-INF/com/google/android/update-binary
           sudo cp -r "$GITHUB_WORKSPACE"/${{ env.device }}/firmware-update "$GITHUB_WORKSPACE"/images
           sudo mv -f "$GITHUB_WORKSPACE"/tools/super_empty.img "$GITHUB_WORKSPACE"/images/firmware-update
           sudo tar -zxvf "$GITHUB_WORKSPACE"/${{ env.device }}_files/boot_official.tar.gz -C "$GITHUB_WORKSPACE"/images
