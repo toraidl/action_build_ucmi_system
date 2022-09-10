@@ -203,13 +203,19 @@ jobs:
           done
           zstd "$GITHUB_WORKSPACE"/images/super.img -o "$GITHUB_WORKSPACE"/images/super.zst --rm
           if [[ "${{ env.device }}" == "umi" ]]; then
-              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/* -v1536m
+              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
               sudo rm -rf "$GITHUB_WORKSPACE"/images
-              echo "NEW_PACKAGE_NAME=miui_UMIPRE_"${{ env.date }}"_12.0_2in1_Root.zip" >> $GITHUB_ENV
+              md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip)
+              zipmd5=${md5:0:10}
+              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip "$GITHUB_WORKSPACE"/images/* -v1536m
+              echo "NEW_PACKAGE_NAME=miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip" >> $GITHUB_ENV
           else
-              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/* -v1536m
+              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
               sudo rm -rf "$GITHUB_WORKSPACE"/images
-              echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_12.0_2in1_Root.zip" >> $GITHUB_ENV
+              md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip)
+              zipmd5=${md5:0:10}
+              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip "$GITHUB_WORKSPACE"/images/* -v1536m
+              echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip" >> $GITHUB_ENV
           fi
       - name: 6.上传到Github Release
         uses: ncipollo/release-action@v1.8.6
