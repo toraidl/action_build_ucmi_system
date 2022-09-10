@@ -218,7 +218,7 @@ jobs:
               echo "miui_CMIPRE_${{ env.date }}.zip" > file.log
           fi
       - name: 6.上传到Github Release
-        uses: ncipollo/release-action@v1.8.6
+        uses: ncipollo/release-action@main
         with:
           artifacts: ${{ github.workspace }}/zip/*
           name: "${{ env.date }}"
@@ -227,7 +227,7 @@ jobs:
           allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: 7.删除工作流运行
-        uses: Mattraks/delete-workflow-runs@v2
+        uses: Mattraks/delete-workflow-runs@main
         with:
           token: ${{ github.token }}
           repository: ${{ github.repository }}
