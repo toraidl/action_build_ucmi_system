@@ -205,19 +205,17 @@ jobs:
           if [[ "${{ env.device }}" == "umi" ]]; then
               sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
               sudo rm -rf "$GITHUB_WORKSPACE"/images
-              md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip)
-              zipmd5=${md5:0:10}
-              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip "$GITHUB_WORKSPACE"/zip/* -v1536m
-              sudo rm -rf "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip
-              echo "NEW_PACKAGE_NAME=miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip" >> $GITHUB_ENV
+              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}_12.0.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip -v1536m
+              sudo rm -rf "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip
+              touch file.log
+              echo "miui_UMIPRE_${{ env.date }}.zip" > file.log
           else
               sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/images/*
               sudo rm -rf "$GITHUB_WORKSPACE"/images
-              md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip)
-              zipmd5=${md5:0:10}
-              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip "$GITHUB_WORKSPACE"/zip/* -v1536m
+              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}_12.0.zip "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip -v1536m
               sudo rm -rf "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip
-              echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip" >> $GITHUB_ENV
+              touch file.log
+              echo "miui_CMIPRE_${{ env.date }}.zip" > file.log
           fi
       - name: 6.上传到Github Release
         uses: ncipollo/release-action@v1.8.6
@@ -225,7 +223,7 @@ jobs:
           artifacts: ${{ github.workspace }}/zip/*
           name: "${{ env.device }}"
           tag: "${{ env.date }}"
-          bodyFile: "${{ env.NEW_PACKAGE_NAME }}"
+          bodyFile: "${{ github.workspace }}/file.log"
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: 7.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
