@@ -220,10 +220,9 @@ jobs:
       - name: 6.上传到Github Release
         uses: ncipollo/release-action@v1.8.6
         with:
-          artifacts: ${{ github.workspace }}/zip/*
+          bodyFile: ${{ github.workspace }}/zip/*
           name: "${{ env.device }}"
           tag: "${{ env.date }}"
-          bodyFile: "${{ env.NEW_PACKAGE_NAME }}"
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: 7.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
