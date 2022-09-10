@@ -224,6 +224,7 @@ jobs:
           name: "${{ env.device }}"
           tag: "${{ env.date }}"
           bodyFile: "${{ github.workspace }}/file.log"
+          allowUpdates: true
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: 7.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
