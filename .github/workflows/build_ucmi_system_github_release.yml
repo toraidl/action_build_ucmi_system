@@ -231,6 +231,7 @@ jobs:
           tag: "${{ env.date }}"
           bodyFile: "${{ github.workspace }}/file.log"
           allowUpdates: true
+          artifactErrorsFailBuild: true
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: 7.删除工作流运行
         uses: Mattraks/delete-workflow-runs@main
