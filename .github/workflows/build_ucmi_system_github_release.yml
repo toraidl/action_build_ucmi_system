@@ -208,8 +208,10 @@ jobs:
               md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip)
               zipmd5=${md5:0:10}
               mv "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip
-              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_12.0_2in1_Root_split.zip "$GITHUB_WORKSPACE"/zip/* -v1536m
+              cd "$GITHUB_WORKSPACE"/zip
+              sudo split -b 1.5G -d "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip miui_UMIPRE_"${{ env.date }}"_12.0_2in1_Root.zip
               sudo rm -rf "$GITHUB_WORKSPACE"/zip/miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip
+              cd "$GITHUB_WORKSPACE"
               touch file.log
               echo "miui_UMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip" > file.log
           else
@@ -218,8 +220,10 @@ jobs:
               md5=$(md5sum "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip)
               zipmd5=${md5:0:10}
               mv "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip
-              sudo 7z a "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_12.0_2in1_Root_split.zip "$GITHUB_WORKSPACE"/zip/* -v1536m
+              cd "$GITHUB_WORKSPACE"/zip
+              sudo split -b 1.5G -d "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip miui_CMIPRE_"${{ env.date }}"_12.0_2in1_Root.zip
               sudo rm -rf "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip
+              cd "$GITHUB_WORKSPACE"
               touch file.log
               echo "miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip" > file.log
           fi
