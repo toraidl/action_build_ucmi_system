@@ -1,4 +1,4 @@
-name: build_ucmi_system_123panpush
+name: build_ucmi_system_OneDrivePush
 on:
   workflow_dispatch:
     inputs:
@@ -39,10 +39,6 @@ jobs:
           curl https://rclone.org/install.sh | sudo bash
           mkdir -p ~/.config/rclone/
           unzip -P ${{ secrets.PASSWORD }} "$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
-          curl -fsSL "https://nn.ci/alist.sh" | sudo bash -s install
-          sudo systemctl stop alist
-          sudo mv -f /home/runner/.config/rclone/data.db /opt/alist/data
-          sudo systemctl start alist
       - name: 2.发送开始构建通知
         run: |
           if [[ "${{ env.device }}" == "umi" ]]; then
@@ -230,11 +226,11 @@ jobs:
       - name: 7.上传到123盘
         run: |
           if [[ "${{ env.device }}" == "umi" ]]; then
-              rclone mkdir 123pan:/UMI_Packages
-              rclone sync -P ./zip/* 123pan:/UMI_Packages
+              rclone mkdir OneDrive:/MI_Packages/UMI_Packages
+              rclone sync -P ./zip/* OneDrive:/MI_Packages/UMI_Packages
           else
-              rclone mkdir 123pan:/CMI_Packages
-              rclone sync -P ./zip/* 123pan:/CMI_Packages
+              rclone mkdir OneDrive:/MI_Packages/CMI_Packages
+              rclone sync -P ./zip/* OneDrive:/MI_Packages/CMI_Packages
           fi
       - name: 8.发送打包成功通知
         run: |
