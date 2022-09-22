@@ -224,18 +224,18 @@ jobs:
       - name: 7.上传到123盘
         run: |
           if [[ "${{ env.device }}" == "umi" ]]; then
-              rclone mkdir OneDrive:/RubbishBin
-              rclone sync -P ./zip/* OneDrive:/RubbishBin
+              rclone mkdir OneDrive:/MI_Packages/RubbishBin
+              rclone sync -P ./zip/* OneDrive:/MI_Packages/RubbishBin
           else
-              rclone mkdir OneDrive:/RubbishBin
-              rclone sync -P ./zip/* OneDrive:/RubbishBin
+              rclone mkdir OneDrive:/MI_Packages/RubbishBin
+              rclone sync -P ./zip/* OneDrive:/MI_Packages/RubbishBin
           fi
       - name: 8.发送打包成功通知
         run: |
           if [[ "${{ env.device }}" == "umi" ]]; then
-              curl -i -X POST -H 'Content-type':'application/json' -d '{"token":"${{ secrets.appToken2 }}","title":"小米10 ${{ env.date }}已构建完成","content":" **小米10 ${{ env.date}}已构建完成** \n \n **包名：${{ env.NEW_PACKAGE_NAME }}** \n \n **MD5：${{ env.MD5 }}** \n \n **下载地址为：[https://alist.zjw.js.cn/d/OneDrive/RubbishBin/${{ env.NEW_PACKAGE_NAME }}](https://alist.zjw.js.cn/d/OneDrive/UMI_Packages/${{ env.NEW_PACKAGE_NAME }})** ","topic":"umi","template":"markdown"}' http://www.pushplus.plus/send || true
+              curl -i -X POST -H 'Content-type':'application/json' -d '{"token":"${{ secrets.appToken2 }}","title":"小米10 ${{ env.date }}已构建完成","content":" **小米10 ${{ env.date}}已构建完成** \n \n **包名：${{ env.NEW_PACKAGE_NAME }}** \n \n **MD5：${{ env.MD5 }}** \n \n **下载地址为：[http://onedrive.zjw.js.cn/Direct/RubbishBin/${{ env.NEW_PACKAGE_NAME }}](http://onedrive.zjw.js.cn/Direct/RubbishBin/${{ env.NEW_PACKAGE_NAME }})** ","topic":"umi","template":"markdown"}' http://www.pushplus.plus/send || true
           else
-              curl -i -X POST -H 'Content-type':'application/json' -d '{"token":"${{ secrets.appToken2 }}","title":"小米10Pro ${{ env.date }}已构建完成","content":" **小米10Pro ${{ env.date }}已构建完成** \n \n **包名：${{ env.NEW_PACKAGE_NAME }}** \n \n **MD5：${{ env.MD5 }}** \n \n **下载地址为：[https://alist.zjw.js.cn/d/OneDrive/RubbishBin/${{ env.NEW_PACKAGE_NAME }}](https://alist.zjw.js.cn/d/OneDrive/CMI_Packages/${{ env.NEW_PACKAGE_NAME }})** ","topic":"cmi","template":"markdown"}' http://www.pushplus.plus/send || true
+              curl -i -X POST -H 'Content-type':'application/json' -d '{"token":"${{ secrets.appToken2 }}","title":"小米10Pro ${{ env.date }}已构建完成","content":" **小米10Pro ${{ env.date }}已构建完成** \n \n **包名：${{ env.NEW_PACKAGE_NAME }}** \n \n **MD5：${{ env.MD5 }}** \n \n **下载地址为：[http://onedrive.zjw.js.cn/Direct/RubbishBin/${{ env.NEW_PACKAGE_NAME }})** ","topic":"cmi","template":"markdown"}' http://www.pushplus.plus/send || true
           fi
       - name: 9.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
