@@ -221,7 +221,7 @@ jobs:
               mv "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_${{ env.date }}.zip "$GITHUB_WORKSPACE"/zip/miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip
               echo "NEW_PACKAGE_NAME=miui_CMIPRE_"${{ env.date }}"_"$zipmd5"_12.0_2in1_Root.zip" >> $GITHUB_ENV
           fi
-      - name: 7.上传到Onedrive
+      - name: 7.上传到OneDrive
         run: |
           if [[ "${{ env.device }}" == "umi" ]]; then
               rclone mkdir OneDrive:/MI_Packages/RubbishBin
