@@ -1,4 +1,4 @@
-name: build_ucmi_system_OneDrivePush - modenmagisk
+name: build_ucmi_system_OneDrivePush - modemmagisk
 on:
   workflow_dispatch:
     inputs:
@@ -190,7 +190,7 @@ jobs:
           sudo mv "$GITHUB_WORKSPACE"/modem1/image/* "$GITHUB_WORKSPACE"/modem/image/
           sudo umount -v "$GITHUB_WORKSPACE"/modem/
           sudo umount -v "$GITHUB_WORKSPACE"/modem1/
-          sudo mv -f"$GITHUB_WORKSPACE"/images/modem.img "$GITHUB_WORKSPACE"/images/firmware-update/NON-HLOS.bin
+          sudo mv -f "$GITHUB_WORKSPACE"/images/modem.img "$GITHUB_WORKSPACE"/images/firmware-update/NON-HLOS.bin
           sudo rm -rf "$GITHUB_WORKSPACE"/modem
           sudo rm -rf "$GITHUB_WORKSPACE"/modem1
       - name: 6.打包
