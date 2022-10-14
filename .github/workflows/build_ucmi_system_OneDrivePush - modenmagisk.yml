@@ -1,4 +1,4 @@
-name: build_ucmi_system_OneDrivePush - test
+name: build_ucmi_system_OneDrivePush - modenmagisk
 on:
   workflow_dispatch:
     inputs:
