@@ -87,6 +87,8 @@ jobs:
               sudo python3 "$GITHUB_WORKSPACE"/tools/imgextractorLinux.py "$GITHUB_WORKSPACE"/images/$i.img "$GITHUB_WORKSPACE"/images
               rm -rf "$GITHUB_WORKSPACE"/images/$i.img
           done
+          "$GITHUB_WORKSPACE"/tools/payload-dumper-go -p modem "$GITHUB_WORKSPACE"/PSYCHE/payload.bin
+          mv "$GITHUB_WORKSPACE"/payload/modem.img "$GITHUB_WORKSPACE"/images/modem.img
           rm -rf "$GITHUB_WORKSPACE"/payload
           rm -rf "$GITHUB_WORKSPACE"/PSYCHE
           rm -rf "$GITHUB_WORKSPACE"/${{ env.ORIGN_ZIP_NAME }}
@@ -171,6 +173,26 @@ jobs:
           # 声音动效动画 By PedroZ
           sudo unzip -o -q "$GITHUB_WORKSPACE"/tools/etc.zip -d "$GITHUB_WORKSPACE"/images/system/system/etc/audio/
           rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}_files
+          # 基带更新 By Meetingfate
+          mkdir -p "$GITHUB_WORKSPACE"/modem "$GITHUB_WORKSPACE"/modem1
+          sudo mount -v -t vfat ""$GITHUB_WORKSPACE"/images/modem.img" ""$GITHUB_WORKSPACE"/modem/"
+          sudo mount -v -t vfat ""$GITHUB_WORKSPACE"/images/firmware-update/NON-HLOS.bin" ""$GITHUB_WORKSPACE"/modem1/"
+          for i in $(ls "$GITHUB_WORKSPACE"/modem/image/); do
+              if [[ $i != modem_pr ]] && [[ $i != sdx55 ]] && [[ $i != sdx55m ]]; then
+                  sudo rm -rf "$GITHUB_WORKSPACE"/modem/image/$i
+              fi
+          done
+          for i in $(sudo ls "$GITHUB_WORKSPACE"/modem1/image/); do
+              if [[ $i = modem_pr ]] || [[ $i = sdx55 ]] || [[ $i = sdx55m ]]; then
+                  sudo rm -rf "$GITHUB_WORKSPACE"/modem1/image/$i
+              fi
+          done
+          sudo mv "$GITHUB_WORKSPACE"/modem1/image/* "$GITHUB_WORKSPACE"/modem/image/
+          sudo umount -v "$GITHUB_WORKSPACE"/modem/
+          sudo umount -v "$GITHUB_WORKSPACE"/modem1/
+          sudo mv -f "$GITHUB_WORKSPACE"/images/modem.img "$GITHUB_WORKSPACE"/images/firmware-update/NON-HLOS.bin
+          sudo rm -rf "$GITHUB_WORKSPACE"/modem
+          sudo rm -rf "$GITHUB_WORKSPACE"/modem1
       - name: 6.打包
         run: |
           sudo chmod 777 "$GITHUB_WORKSPACE"/tools/mke2fs
