@@ -95,6 +95,7 @@ jobs:
       - name: 5.替换相关文件
         run: |
           sudo rm -rf "$GITHUB_WORKSPACE"/images/product/etc/device_features/*
+          sudo rm -rf "$GITHUB_WORKSPACE"/images/product/data-app
           sudo cp -f "$GITHUB_WORKSPACE"/${{ env.device }}_files/${{ env.device }}.xml "$GITHUB_WORKSPACE"/images/product/etc/device_features
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor/recovery-from-boot.p
           sudo rm -rf "$GITHUB_WORKSPACE"/${{ env.device }}/vendor/bin/install-recovery.sh
