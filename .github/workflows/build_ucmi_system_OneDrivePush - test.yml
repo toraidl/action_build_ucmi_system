@@ -38,7 +38,7 @@ jobs:
           pip3 install --ignore-installed pyyaml
           curl https://rclone.org/install.sh | sudo bash
           mkdir -p ~/.config/rclone/
-          unzip -P ${{ secrets.PASSWORD }} "$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
+          unzip -P ${{ secrets.PASSWORD }} "$GITHUB_WORKSPACE"/tools/rclone_test.zip -d ~/.config/rclone/
       - name: 2.发送开始构建通知
         run: |
           if [[ "${{ env.device }}" == "umi" ]]; then
