@@ -229,8 +229,8 @@ jobs:
           fi
       - name: 6.上传到OneDrive
         run: |
-            rclone mkdir OneDrive:/MI_Packages/UMI_Packages
-            rclone sync -P ./zip/* OneDrive:/MI_Packages/UMI_Packages
+            rclone mkdir onedrive:/MI_Packages/UMI_Packages
+            rclone sync -P ./zip/* onedrive:/MI_Packages/UMI_Packages
       - name: 8.导出信息
         uses: dmnemec/copy_file_to_another_repo_action@main
         env:
