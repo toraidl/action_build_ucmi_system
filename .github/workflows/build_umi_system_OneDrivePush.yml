@@ -32,7 +32,7 @@ jobs:
           pip3 install --ignore-installed pyyaml
           curl https://rclone.org/install.sh | sudo bash
           mkdir -p ~/.config/rclone/
-          unzip -P "$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
+          unzip "$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
       - name: 2.下载系统包
         run: |
           aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" ${{ github.event.inputs.URL }}
