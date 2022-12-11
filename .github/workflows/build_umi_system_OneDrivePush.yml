@@ -231,17 +231,6 @@ jobs:
         run: |
             rclone mkdir onedrive:/MI_Packages/UMI_Packages
             rclone sync -P ./zip/* onedrive:/MI_Packages/UMI_Packages
-      - name: 8.导出信息
-        uses: dmnemec/copy_file_to_another_repo_action@main
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.API_TOKEN_GITHUB }}
-        with:
-          source_file: 'romdata/${{ env.device }}.ini'
-          destination_repo: 'zjw2017/sm8250-page'
-          destination_folder: 'device'
-          user_email: 'example@email.com'
-          user_name: 'zjw2017'
-          commit_message: 'Update from $GITHUB_REF'
       - name: 10.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
         with:
