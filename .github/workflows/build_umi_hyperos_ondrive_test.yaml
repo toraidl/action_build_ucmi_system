@@ -35,8 +35,6 @@ jobs:
           unzip "$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
       - name: 2.克隆仓库&下载系统包
         run: |
-          #aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE"  https://bigota.d.miui.com/V14.0.4.0.TJBCNXM/miui_UMI_V14.0.4.0.TJBCNXM_23fc5ef4ee_13.0.zip
-          #aria2c -x16 -j$(nproc) -U "Mozilla/5.0" -d "$GITHUB_WORKSPACE" ${{ github.event.inputs.URL }}
           if [[ ${{ github.events.inputs.url }} == *SHENNONG* ]];then 
             git clone --depth 1 https://github.com/toraidl/hyperos_port.git -b shennong-stable hyperos_port
           else
