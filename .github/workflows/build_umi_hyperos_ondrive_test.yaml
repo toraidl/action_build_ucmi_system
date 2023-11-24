@@ -35,7 +35,7 @@ jobs:
           unzip "$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
       - name: 2.克隆仓库&下载系统包
         run: |
-          if [[ ${{ github.events.inputs.url }} == *SHENNONG* ]];then 
+          if [[ ${{ github.event.inputs.url }} == *SHENNONG* ]];then 
             git clone --depth 1 https://github.com/toraidl/hyperos_port.git -b shennong-stable hyperos_port
           else
             git clone --depth 1 https://github.com/toraidl/hyperos_port.git -b fuxi-dev hyperos_port
