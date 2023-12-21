@@ -39,7 +39,8 @@ jobs:
       - name: 3. 开始移植
         run: |
           cd hyperos_port
-          sudo ./port.sh http://ks3orig.bigota.d.miui.com/V14.0.4.0.TJBCNXM/miui_UMI_V14.0.4.0.TJBCNXM_23fc5ef4ee_13.0.zip ${{ github.event.inputs.URL }}
+          sudo bash setup.sh
+          sudo bash port.sh http://ks3orig.bigota.d.miui.com/V14.0.4.0.TJBCNXM/miui_UMI_V14.0.4.0.TJBCNXM_23fc5ef4ee_13.0.zip ${{ github.event.inputs.URL }}
       - name: 4.上传到OneDrive
         run: |
             rclone mkdir onedrive:/MI_Packages/UMI_Packages
