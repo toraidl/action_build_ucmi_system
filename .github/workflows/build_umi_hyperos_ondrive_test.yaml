@@ -7,19 +7,19 @@ on:
         required: true
 jobs:
   build:
-    strategy:
-      fail-fast: true
-      matrix:
-        runs-on:
-          - ubuntu-20.04
-    runs-on: ${{ matrix.runs-on }}
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
+      - name: 最大化构建环境
+        uses: easimon/maximize-build-space@master
+        with:
+          swap-size-mb: 8192
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+      - name: 检出仓库文件
+        uses: actions/checkout@main
       - name: 1.准备环境
         run: |
-          echo "date=$(echo ${{ github.event.inputs.URL }} | cut -d"/" -f4)" >> $GITHUB_ENV
-              echo "device=umi" >> $GITHUB_ENV
-              echo "ORIGN_ZIP_NAME=miui_UMI_V14.0.4.0.TJBCNXM_23fc5ef4ee_13.0.zip" >> $GITHUB_ENV
           sudo apt install python3 python3-pip aria2 zip p7zip-full tar zipalign zstd openjdk-8-jre
           sudo apt --fix-broken install
           sudo apt update --fix-missing
