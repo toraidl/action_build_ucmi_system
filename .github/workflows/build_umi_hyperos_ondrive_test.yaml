@@ -2,9 +2,19 @@ name: build_umi_hyperos_OneDrivePush
 on:
   workflow_dispatch:
     inputs:
-      URL:
+      STOCK_URL:
+        description: "待操作的底包/xiaomi.eu底包下载地址"
+        required: true
+      PORT_URL:
         description: "待操作的移植包下载地址"
         required: true
+      PACK_TYPE:
+        description: "打包类型（EXT/EROFS)，默认EXT"
+        required: false
+      ENCRYPTION:
+        description: "是否解密data分区(TRUE/FALSE)，默认加密"
+        required: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,14 +43,21 @@ jobs:
           curl https://rclone.org/install.sh | sudo bash
           mkdir -p ~/.config/rclone/
           unzip -P ${{ secrets.PASSWORD }} "$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
-      - name: 2.克隆仓库&下载系统包
+      - name: 2.克隆仓库
         run: |
           git clone --depth 1 https://github.com/toraidl/hyperos_port.git -b main hyperos_port
       - name: 3. 开始移植
         run: |
           cd hyperos_port
+          if [[ ${{ github.event.inputs.PACK_TYPE }} = "EROFS" ]]; then
+              sed -i "s/repack_with_ext4=true/repack_with_ext4=false/" bin/port_config
+          fi
+
+          if [[ ${{ github.event.inputs.ENCRYPTION }} = "TRUE" ]]; then
+              sed -i "s/remove_data_encryption=false/remove_data_encryption=true/" bin/port_config
+          fi
           sudo bash setup.sh
-          sudo bash port.sh http://ks3orig.bigota.d.miui.com/V14.0.4.0.TJBCNXM/miui_UMI_V14.0.4.0.TJBCNXM_23fc5ef4ee_13.0.zip ${{ github.event.inputs.URL }}
+          sudo bash port.sh ${{ github.event.inputs.STOCK_URL }} ${{ github.event.inputs.PORT_URL }}
       - name: 4.上传到OneDrive
         run: |
             rclone mkdir onedrive:/MI_Packages/UMI_Packages
