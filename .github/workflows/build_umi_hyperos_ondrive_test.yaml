@@ -32,7 +32,7 @@ jobs:
           pip3 install --ignore-installed pyyaml
           curl https://rclone.org/install.sh | sudo bash
           mkdir -p ~/.config/rclone/
-          unzip -P ${{ secrets.PASSWORD }}"$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
+          unzip -P ${{ secrets.PASSWORD }} "$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
       - name: 2.克隆仓库&下载系统包
         run: |
           git clone --depth 1 https://github.com/toraidl/hyperos_port.git -b main hyperos_port
