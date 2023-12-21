@@ -49,11 +49,11 @@ jobs:
       - name: 3. 开始移植
         run: |
           cd hyperos_port
-          if [[ ${{ github.event.inputs.PACK_TYPE }} = "EROFS" ]]; then
+          if [[ ${{ github.event.inputs.PACK_TYPE }} == "EROFS" ]]; then
               sed -i "s/repack_with_ext4=true/repack_with_ext4=false/" bin/port_config
           fi
 
-          if [[ ${{ github.event.inputs.ENCRYPTION }} = "TRUE" ]]; then
+          if [[ ${{ github.event.inputs.ENCRYPTION }} == "TRUE" ]]; then
               sed -i "s/remove_data_encryption=false/remove_data_encryption=true/" bin/port_config
           fi
           sudo bash setup.sh
