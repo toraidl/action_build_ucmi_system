@@ -60,7 +60,7 @@ jobs:
           sudo bash port.sh ${{ github.event.inputs.STOCK_URL }} ${{ github.event.inputs.PORT_URL }}
       - name: 4.上传到OneDrive
         run: |
-            rclone sync -P ./hyperos_port/out/*.zip onedrive:/ROM
+            rclone sync -P ./hyperos_port/out/*.zip onedrive:/ROM/github-action
       - name: 5.删除工作流运行
         uses: Mattraks/delete-workflow-runs@v2
         with:
