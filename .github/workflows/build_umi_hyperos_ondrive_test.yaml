@@ -43,7 +43,6 @@ jobs:
           if [[ ${{ github.event.inputs.ENCRYPTION }} == "TRUE" ]]; then
               sed -i "s/remove_data_encryption=false/remove_data_encryption=true/" bin/port_config
           fi
-          sudo bash setup.sh
           sudo bash port.sh ${{ github.event.inputs.STOCK_URL }} ${{ github.event.inputs.PORT_URL }}
       - name: 4.上传到OneDrive
         run: |
