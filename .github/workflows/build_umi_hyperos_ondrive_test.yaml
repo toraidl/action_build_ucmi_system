@@ -36,7 +36,9 @@ jobs:
           temp-reserve-mb: 1024
           remove-android: "true"
           remove-haskell: "true"
-      - name: 3.准备环境
+      - name: 3. 检出仓库文件
+        uses: actions/checkout@main
+      - name: 4. 准备环境
         run: |
           sudo apt install python3 python3-pip aria2 zip p7zip-full tar zipalign zstd openjdk-8-jre android-sdk-libsparse-utils xmlstarlet
           sudo apt --fix-broken install
@@ -44,11 +46,11 @@ jobs:
           pip3 install --upgrade pip
           curl https://rclone.org/install.sh | sudo bash
           mkdir -p ~/.config/rclone/
-          unzip -P ${{ secrets.PASSWORD }} "$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
-      - name: 4.克隆仓库
+          unzip -P ${{ secrets.PASSWORD }} ./tools/rclone.zip -d ~/.config/rclone/
+      - name: 5.克隆仓库
         run: |
           git clone --depth 1 https://github.com/toraidl/hyperos_port.git -b main hyperos_port
-      - name: 5. 开始移植
+      - name: 6. 开始移植
         run: |
           cd hyperos_port
           if [[ ${{ github.event.inputs.PACK_TYPE }} == "EROFS" ]]; then
@@ -59,6 +61,6 @@ jobs:
               sed -i "s/remove_data_encryption=false/remove_data_encryption=true/" bin/port_config
           fi
           sudo bash port.sh ${{ github.event.inputs.STOCK_URL }} ${{ github.event.inputs.PORT_URL }}
-      - name: 4.上传到OneDrive
+      - name: 7.上传到OneDrive
         run: |
             rclone sync -P ./hyperos_port/out/*.zip onedrive:/ROM/github-action
