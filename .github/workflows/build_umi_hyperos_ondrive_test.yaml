@@ -19,9 +19,24 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: 检出仓库文件
-        uses: actions/checkout@main
-      - name: 1.准备环境
+      - name: 1. 精简无用组件
+        run: |
+          docker rmi `docker images -q` || true
+          sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/sudo apt/sources.list.d || true
+          sudo apt -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php* || true
+          sudo apt -y autoremove --purge || true
+          sudo apt -y autoclean || true
+          sudo apt clean || true
+      - name: 2. 最大化并挂载构建空间
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 1024
+          swap-size-mb: 6144
+          remove-dotnet: "true"
+          temp-reserve-mb: 1024
+          remove-android: "true"
+          remove-haskell: "true"
+      - name: 3.准备环境
         run: |
           sudo apt install python3 python3-pip aria2 zip p7zip-full tar zipalign zstd openjdk-8-jre android-sdk-libsparse-utils xmlstarlet
           sudo apt --fix-broken install
@@ -30,10 +45,10 @@ jobs:
           curl https://rclone.org/install.sh | sudo bash
           mkdir -p ~/.config/rclone/
           unzip -P ${{ secrets.PASSWORD }} "$GITHUB_WORKSPACE"/tools/rclone.zip -d ~/.config/rclone/
-      - name: 2.克隆仓库
+      - name: 4.克隆仓库
         run: |
           git clone --depth 1 https://github.com/toraidl/hyperos_port.git -b main hyperos_port
-      - name: 3. 开始移植
+      - name: 5. 开始移植
         run: |
           cd hyperos_port
           if [[ ${{ github.event.inputs.PACK_TYPE }} == "EROFS" ]]; then
