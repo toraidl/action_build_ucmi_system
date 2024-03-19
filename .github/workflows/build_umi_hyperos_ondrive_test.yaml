@@ -53,6 +53,7 @@ jobs:
       - name: 6. 开始移植
         run: |
           cd hyperos_port
+          rclone sync -P onedrive:/ROM_FILES/ devices/
           if [[ ${{ github.event.inputs.PACK_TYPE }} == "EROFS" ]]; then
               sed -i "s/repack_with_ext4=true/repack_with_ext4=false/" bin/port_config
           fi
@@ -60,7 +61,7 @@ jobs:
           if [[ ${{ github.event.inputs.ENCRYPTION }} == "TRUE" ]]; then
               sed -i "s/remove_data_encryption=false/remove_data_encryption=true/" bin/port_config
           fi
-          sudo bash port.sh ${{ github.event.inputs.STOCK_URL }} ${{ github.event.inputs.PORT_URL }}
+          sudo bash port.sh ${{ github.event.inputs.STOCK_URL }} ${{ github.event.inputs.PORT_URL }} 
       - name: 7.上传到OneDrive
         run: |
             rclone sync -P ./hyperos_port/out/*.zip onedrive:/ROM/github-action
