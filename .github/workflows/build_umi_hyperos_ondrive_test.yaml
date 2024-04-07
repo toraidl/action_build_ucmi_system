@@ -53,7 +53,13 @@ jobs:
       - name: 6. 开始移植
         run: |
           cd hyperos_port
-          rclone sync -P onedrive:/ROM_FILES/ devices/
+          mkdir tmp
+          rclone sync -P onedrive:/ROM_FILES/ tmp/
+          zipfiles=$(find tmp -name "*.zip")
+          for file in $zipfiles; do
+            echo "Unzipping $file to devices folder" 
+            unzip -o $file -d devices
+          done
           if [[ ${{ github.event.inputs.PACK_TYPE }} == "EROFS" ]]; then
               sed -i "s/repack_with_ext4=true/repack_with_ext4=false/" bin/port_config
           fi
