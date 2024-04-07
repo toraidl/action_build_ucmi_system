@@ -49,7 +49,7 @@ jobs:
           unzip -P ${{ secrets.PASSWORD }} ./tools/rclone.zip -d ~/.config/rclone/
       - name: 5.克隆仓库
         run: |
-          git clone --depth 1 https://github.com/toraidl/hyperos_port.git -b dev hyperos_port
+          git clone --depth 1 https://github.com/toraidl/hyperos_port.git -b rebase hyperos_port
       - name: 6. 开始移植
         run: |
           cd hyperos_port
