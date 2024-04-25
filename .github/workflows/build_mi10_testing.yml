@@ -77,8 +77,8 @@ jobs:
           echo "ROM_FILE=$ROM_FILE" >>$GITHUB_ENV
           OS_VERSION=$(echo $ROM_FILE | cut -d "_" -f3)
           echo "OS_VERSION=$OS_VERSION" >>$GITHUB_ENV
-          mkdir -p "$GITHUB_WORKSPACE"/GithubRelease
-          cd "$GITHUB_WORKSPACE"/GithubRelease
+          mkdir -p "$GITHUB_WORKSPACE"/hyperos_port/GithubRelease
+          cd "$GITHUB_WORKSPACE"/hyperos_port/GithubRelease
           sudo split -b 1536M -d "$GITHUB_WORKSPACE"/hyperos_port/out/$ROM_FILE $ROM_FILE
           ls -al "$GITHUB_WORKSPACE"/hyperos_port/GithubRelease/
       - name: 7.上传到OneDrive | PUSH ROM TO ONEDRIVE
