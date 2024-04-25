@@ -1,4 +1,4 @@
- name: build_mi10_testing
+name: build_mi10_testing
 on:
   workflow_dispatch:
     inputs:
